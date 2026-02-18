@@ -1,12 +1,20 @@
 console.log("Viz script loaded");
 
 import { renderVis } from "./js/lib.js";
+import { VisQuadrant } from "./js/VisQuadrant.js";
 import { VisBrandDiscovery } from "./js/VisBrandDiscovery.js";
 import { VisServiceDisruption } from "./js/VisServiceDisruption.js";
 import { VisCustomerRelationships } from "./js/VisCustomerRelationships.js";
 
 // detect vertical from global config (embed code in head)
 customChartsConfig = window.customChartsConfig || {};
+
+// QUADRANT
+renderVis({
+  id: "vis-quadrant",
+  component: VisQuadrant,
+  vertical: customChartsConfig.vertical || null,
+});
 
 // BRAND DISCOVERY
 renderVis({
