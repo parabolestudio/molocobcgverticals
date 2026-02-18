@@ -1,30 +1,13 @@
 console.log("Viz script loaded");
 
-import { html, renderComponent } from "./js/preact-htm.js";
-// import { Vis1 } from "./js/Vis1.js";
+import { renderVis } from "./js/lib.js";
+import { VisBrandDiscovery } from "./js/VisBrandDiscovery.js";
 
-const Vis = async (props) => {
-  // console.log("Rendering Vis component with props:", props);
-  return html` <${props.component} ...${props} /> `;
-};
+// detect vertical from global config (embed code in head)
+customChartsConfig = window.customChartsConfig || {};
 
-function renderVis(vis) {
-  const containerElement = document.getElementById(vis.id);
-  if (containerElement) {
-    // clear existing content before rendering
-    containerElement.innerHTML = "";
-
-    // wait for async Vis to resolve before rendering
-    (async () => {
-      const rendered = await Vis(vis);
-      renderComponent(rendered, containerElement);
-    })();
-  } else {
-    console.error(`Could not find container element for vis with id ${vis.id}`);
-  }
-}
-
-// renderVis({
-//   id: "vis-1",
-//   component: Vis1,
-// });
+renderVis({
+  id: "vis-brand-discovery",
+  component: VisBrandDiscovery,
+  vertical: customChartsConfig.vertical || null,
+});
