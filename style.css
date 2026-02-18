@@ -1,0 +1,27 @@
+.customer-relationships-container {
+  .axis-line {
+    stroke: var(--Black, #04033a);
+    mix-blend-mode: multiply;
+    opacity: 0.4;
+  }
+  .axis-text {
+    color: var(--Black, #04033a);
+    mix-blend-mode: multiply;
+    opacity: 0.4;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 119.965%; /* 16.795px */
+  }
+  .ban {
+    color: var(--Black, #04033a);
+
+    /* Big numbers */
+    font-family: MuseoModerno;
+    font-size: 96px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 119.965%; /* 115.167px */
+  }
+}
