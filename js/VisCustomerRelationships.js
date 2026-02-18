@@ -1,10 +1,10 @@
 import { html, csv, useEffect, useState } from "./lib.js";
 
-export function VisServiceDisruption({ vertical, variable }) {
+export function VisCustomerRelationships({ vertical, variable }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    csv(`./data/data_service_disruption.csv`).then((rawData) => {
+    csv(`./data/data_customer_relationships.csv`).then((rawData) => {
       if (vertical) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {
@@ -19,12 +19,12 @@ export function VisServiceDisruption({ vertical, variable }) {
     });
   }, []);
 
-  console.log("SERVICE DISRUPTION - Loaded data:", variable, data);
+  console.log("CUSTOMER RELATIONSHIPS - Loaded data:", variable, data);
 
   if (!data) return html`<div>Loading data...</div>`;
 
   return html`<div>
-    Coded Service Disruption Visualization for ${vertical} and ${" "}
+    Coded Customer Relationships Visualization for ${vertical} and ${" "}
     ${variable}
   </div>`;
 }
