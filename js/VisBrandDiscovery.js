@@ -10,7 +10,61 @@ export function VisBrandDiscovery({ vertical }) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {
           const verticalData = filteredData[0];
-          setData(verticalData);
+          console.log("BRAND DISCOVERY - Loaded data:", verticalData);
+
+          const data = {
+            affiliates: {
+              value: +verticalData["Affiliates"],
+              label: "Affiliates",
+              type: "low", // TODO: check
+            },
+            display: {
+              value: +verticalData["Display"],
+              label: "Display",
+              type: "high",
+            },
+            emailCRM: {
+              value: +verticalData["E-Mail & CRM"],
+              label: "E-Mail & CRM",
+              type: "low", // TODO: check
+            },
+            ecommerceRetailMedia: {
+              value: +verticalData["E-commerce & Retail Media"],
+              label: "E-commerce & Retail Media",
+              type: "high", // TODO: check
+            },
+            inAppMarketing: {
+              value: +verticalData["In-App Marketing"],
+              label: "In-App Marketing",
+              type: "low", // TODO: check
+            },
+            organicSeoSocial: {
+              value: +verticalData["Organic (SEO, Social)"],
+              label: "Organic (SEO, Social)",
+              type: "high",
+            },
+            organicDirect: {
+              value: +verticalData["Organic Direct"],
+              label: "Organic Direct",
+              type: "low",
+            },
+            paidSearch: {
+              value: +verticalData["Paid Search"],
+              label: "Paid Search",
+              type: "high",
+            },
+            socialMedia: {
+              value: +verticalData["Social Media"],
+              label: "Social Media",
+              type: "low",
+            },
+            video: {
+              value: +verticalData["Video (YT, OTT)"],
+              label: "Video (YT, OTT)",
+              type: "medium",
+            },
+          };
+          setData(data);
         }
       }
     });
@@ -25,7 +79,20 @@ export function VisBrandDiscovery({ vertical }) {
   const svgWidth = widthLeft + widthCurve + widthAnnotationsRight;
   const svgHeight = heightSemicircle + heightAnnotationsTop;
 
-  console.log("BRAND DISCOVERY - Loaded data:", data);
+  console.log("BRAND DISCOVERY - Formatted data:", data);
+
+  const totalLow = data
+    ? Object.values(data)
+        .filter((d) => d.type === "low")
+        .reduce((sum, d) => sum + d.value, 0)
+    : 0;
+  const totalHigh = data
+    ? Object.values(data)
+        .filter((d) => d.type === "high")
+        .reduce((sum, d) => sum + d.value, 0)
+    : 0;
+  console.log("BRAND DISCOVERY - Total low:", totalLow);
+  console.log("BRAND DISCOVERY - Total high:", totalHigh);
 
   if (!data) return html`<div>Loading data...</div>`;
 
@@ -39,14 +106,18 @@ export function VisBrandDiscovery({ vertical }) {
       <div
         style="width: ${widthLeft}px; flex-basis: ${widthLeft}px; flex-shrink: 0;"
       >
-        <p class="ban" style="color: #60E2B7">64%</p>
+        <p class="ban" style="color: #60E2B7">
+          ${(totalLow * 100).toFixed(0)}%
+        </p>
         <p class="ban-label" style="max-width: 220px;">
           of traffic is organic direct, suggesting strong brand equity provides
           meaningful insulation.
         </p>
       </div>
       <div>
-        <p class="ban" style="color: #B7A6FF">24%</p>
+        <p class="ban" style="color: #B7A6FF">
+          ${(totalHigh * 100).toFixed(0)}%
+        </p>
         <p class="ban-label">
           of FinTech traffic comes from channels facing high disruption, with
           organic SEO, the foundation of most digital marketing strategies,
