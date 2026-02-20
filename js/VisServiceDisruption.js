@@ -5,6 +5,13 @@ export function VisServiceDisruption({ vertical, variable, data }) {
 
   if (!data) return html`<div>Loading data...</div>`;
 
+  if (variable === "Overall score") {
+    return html`<span>${data}</span>`;
+  }
+  if (variable === "Disruption value") {
+    return html`<span>${data} disruption</span>`;
+  }
+
   return html`<div>
     Coded Service Disruption Visualization for ${vertical} and ${" "}
     ${variable}

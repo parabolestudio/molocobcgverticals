@@ -34,6 +34,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       console.log("SERVICE DISRUPTION - Loaded data:", filteredData[0]);
       const verticalData = filteredData[0];
 
+      // render each variable's vis
       renderVis({
         id: "vis-service-disruption-disintermediation",
         component: VisServiceDisruption,
@@ -56,7 +57,21 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         data: verticalData["Regulatory shield"],
       });
 
-      // TODO: replace summary text in Webflow
+      // replace summary text in Webflow
+      renderVis({
+        id: "vis-service-disruption-total-score",
+        component: VisServiceDisruption,
+        vertical: customChartsConfig.vertical || null,
+        variable: "Overall score",
+        data: verticalData["Overall score"],
+      });
+      renderVis({
+        id: "vis-service-disruption-total-label",
+        component: VisServiceDisruption,
+        vertical: customChartsConfig.vertical || null,
+        variable: "Disruption value",
+        data: verticalData["Disruption value"],
+      });
     }
   }
 });
