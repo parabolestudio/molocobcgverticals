@@ -27,6 +27,7 @@ renderVis({
   id: "vis-quadrant",
   component: VisQuadrant,
   vertical: customChartsConfig.vertical || null,
+  isMobile: mobile,
 });
 
 // BRAND DISCOVERY
