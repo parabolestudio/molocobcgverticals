@@ -2,6 +2,11 @@ import { h, render } from "https://esm.sh/preact";
 import htm from "https://esm.sh/htm";
 import { useState, useEffect, useRef } from "https://esm.sh/preact/hooks";
 import { csv } from "https://esm.sh/d3-fetch";
+import {
+  scaleLinear,
+  scaleThreshold,
+  scalePoint,
+} from "https://esm.sh/d3-scale";
 
 function renderVis(vis) {
   const containerElement = document.getElementById(vis.id);
@@ -21,4 +26,13 @@ function renderVis(vis) {
 
 export const html = htm.bind(h);
 export const renderComponent = render;
-export { useState, useEffect, useRef, csv, renderVis };
+export {
+  useState,
+  useEffect,
+  useRef,
+  csv,
+  scaleLinear,
+  scaleThreshold,
+  scalePoint,
+  renderVis,
+};

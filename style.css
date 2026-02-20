@@ -29,9 +29,11 @@
 .service-disruption-container {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
 
   .service-disruption-number {
+    /* when max number is 10, to achieve alignment of circles */
+    /* flex-basis: 110px; */
     flex-basis: 70px;
 
     color: var(--Black, #04033a);
@@ -42,5 +44,16 @@
     font-style: normal;
     font-weight: 700;
     line-height: 119.965%; /* 115.167px */
+  }
+
+  .avg-text {
+    color: var(--Black, #04033a);
+    text-align: center;
+
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 119.965%; /* 16.795px */
   }
 }
