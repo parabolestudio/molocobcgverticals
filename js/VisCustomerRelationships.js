@@ -55,6 +55,13 @@ const groupings = {
   ],
 };
 
+// TODO: replace with actual average value for the vertical
+const averageValues = {
+  "Acquisition strength": 7.25,
+  "Sustained loyalty": 6.75,
+  "Platform engagement depth": 7.5,
+};
+
 export function VisCustomerRelationships({ id, vertical, variable, data }) {
   console.log("CUSTOMER RELATIONSHIPS - Loaded data:", variable, data);
 
@@ -66,7 +73,7 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     visContainer && visContainer.offsetWidth ? visContainer.offsetWidth : 600;
   const aspectRatio = 352 / 160; // width:height ratio
   const height = width / aspectRatio;
-  const margin = { top: 0, right: 18, bottom: 0, left: 18 };
+  const margin = { top: 10, right: 18, bottom: 0, left: 18 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
   const arcWidth = 30;
@@ -90,6 +97,7 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     return { type: group.type, arcGen };
   });
 
+  // calculate data arc attributes (for line and circle)
   const dataAngle = angleScale((data - 0) / 10);
   const dataElement = {
     arc: arc()
@@ -100,6 +108,30 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     circlePosition: {
       x: (innerHeight - arcWidth / 2) * Math.cos(dataAngle - Math.PI / 2),
       y: (innerHeight - arcWidth / 2) * Math.sin(dataAngle - Math.PI / 2),
+    },
+  };
+
+  // calculate average line
+
+  const averageValue = averageValues[variable];
+  const averageAngle = angleScale((averageValue - 0) / 10);
+  const averageLineMargin = 12;
+  const averageElement = {
+    lineStart: {
+      x:
+        (innerHeight - arcWidth - averageLineMargin) *
+        Math.cos(averageAngle - Math.PI / 2),
+      y:
+        (innerHeight - arcWidth - averageLineMargin) *
+        Math.sin(averageAngle - Math.PI / 2),
+    },
+    lineEnd: {
+      x:
+        (innerHeight + averageLineMargin) *
+        Math.cos(averageAngle - Math.PI / 2),
+      y:
+        (innerHeight + averageLineMargin) *
+        Math.sin(averageAngle - Math.PI / 2),
     },
   };
 
@@ -161,20 +193,49 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
             />`;
           })}
         </g>
-        <path
-          d="${dataElement.arc()}"
-          fill="#04033A"
-          transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
-          stroke="#04033A"
-          stroke-width="3"
-        />
-        <circle
-          cx="${dataElement.circlePosition.x}"
-          cy="${dataElement.circlePosition.y}"
-          r="6"
-          fill="#04033A"
-          transform="${`translate(${innerWidth / 2}, ${innerHeight})  rotate(-90)`}"
-        />
+        <g class="average-elements">
+          <line
+            x1="${averageElement.lineStart.x}"
+            y1="${averageElement.lineStart.y}"
+            x2="${averageElement.lineEnd.x}"
+            y2="${averageElement.lineEnd.y}"
+            stroke="#04033A"
+            stroke-opacity="0.4"
+            stroke-width="1.5"
+            transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+          />
+          <g
+            transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+          >
+            <text
+              x="${averageElement.lineEnd.x + 10}"
+              y="${averageElement.lineEnd.y + 2}"
+              dominant-baseline="middle"
+              class="average-label"
+              transform="${`rotate(90)`}"
+              transform-origin="${averageElement.lineEnd.x +
+              10} ${averageElement.lineEnd.y + 2}"
+            >
+              avg
+            </text>
+          </g>
+        </g>
+        <g class="data-elements">
+          <path
+            d="${dataElement.arc()}"
+            fill="#04033A"
+            transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+            stroke="#04033A"
+            stroke-width="3"
+          />
+          <circle
+            cx="${dataElement.circlePosition.x}"
+            cy="${dataElement.circlePosition.y}"
+            r="6"
+            fill="#04033A"
+            transform="${`translate(${innerWidth / 2}, ${innerHeight})  rotate(-90)`}"
+          />
+        </g>
       </g>
     </svg>
   </div>`;

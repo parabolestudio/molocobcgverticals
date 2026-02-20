@@ -53,6 +53,10 @@
 }
 
 .customer-relationships-container {
+  svg {
+    overflow: visible;
+  }
+
   .axis-line {
     stroke: var(--Black, #04033a);
     mix-blend-mode: multiply;
@@ -77,5 +81,17 @@
     font-style: normal;
     font-weight: 700;
     line-height: 119.965%; /* 115.167px */
+  }
+
+  .average-label {
+    fill: var(--Black, #04033a);
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 119.965%; /* 16.795px */
   }
 }
