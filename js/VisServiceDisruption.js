@@ -1,25 +1,6 @@
-import { html, csv, useEffect, useState } from "./lib.js";
-import { REPO_URL } from "./helpers.js";
+import { html, useEffect, useState } from "./lib.js";
 
-export function VisServiceDisruption({ vertical, variable }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
-      if (vertical) {
-        const filteredData = rawData.filter((d) => d.Vertical === vertical);
-        if (filteredData.length > 0) {
-          const verticalData = filteredData[0];
-
-          // select variable-specific data if variable is provided
-          if (variable && verticalData[variable]) {
-            setData(verticalData[variable]);
-          }
-        }
-      }
-    });
-  }, []);
-
+export function VisServiceDisruption({ vertical, variable, data }) {
   console.log("SERVICE DISRUPTION - Loaded data:", variable, data);
 
   if (!data) return html`<div>Loading data...</div>`;
