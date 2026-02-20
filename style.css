@@ -38,6 +38,18 @@
     font-style: normal;
     font-weight: 700;
     line-height: 119.965%; /* 115.167px */
+
+    @media (max-width: 768px) {
+      font-size: 72px;
+      flex-basis: 50px;
+    }
+  }
+
+  svg {
+    margin-top: 3px;
+    @media (max-width: 768px) {
+      margin-top: 0;
+    }
   }
 
   .avg-text {

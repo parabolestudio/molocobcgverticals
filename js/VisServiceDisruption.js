@@ -6,8 +6,8 @@ import {
   scalePoint,
 } from "./lib.js";
 
-export function VisServiceDisruption({ vertical, variable, data }) {
-  console.log("SERVICE DISRUPTION - Loaded data:", variable, data);
+export function VisServiceDisruption({ variable, data, isMobile }) {
+  console.log("SERVICE DISRUPTION - Loaded data:", variable, data, isMobile);
 
   if (!data) return html`<div>Loading data...</div>`;
 
@@ -18,13 +18,13 @@ export function VisServiceDisruption({ vertical, variable, data }) {
     return html`<span>${data} disruption</span>`;
   }
 
-  const height = 70;
-  const width = 495;
+  const circleDiameter = isMobile ? 35 : 40;
+  const circleGap = isMobile ? 10 : 15;
+  const height = isMobile ? circleDiameter * 2 + circleGap : 70;
+  const width = isMobile ? circleDiameter * 5 + 4 * circleGap : 495;
   const margin = { top: 0, right: 5, bottom: 0, left: 5 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
-
-  const circleDiameter = 40;
 
   const disruptionScale = scaleThreshold()
     .domain([2.001, 4.001, 6.001, 8.001, 10.001])
@@ -43,42 +43,61 @@ export function VisServiceDisruption({ vertical, variable, data }) {
     "Very High": "#7659EE",
   };
 
-  const scaleX = scalePoint()
+  const scaleXDesktop = scalePoint()
     .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     .range([0, innerWidth - circleDiameter]);
+  const scaleXMobile = scalePoint()
+    .domain([1, 2, 3, 4, 5])
+    .range([0, innerWidth - circleDiameter]);
+
+  const scaleYMobile = scaleThreshold()
+    .domain([6, 10])
+    .range([circleDiameter / 2, innerHeight - circleDiameter / 2]);
 
   const avgValue = 8;
 
   return html`<div class="service-disruption-container">
     <span class="service-disruption-number">${data}</span>
-    <svg width="${width}" height="${height}" style="margin-top: 3px">
+    <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
-        <g transform="translate(${scaleX(avgValue) + circleDiameter / 2}, 20)">
-          <text
-            class="avg-text"
-            dy="-10"
-            text-anchor="middle"
-            dominant-baseline="middle"
-          >
-            avg.
-          </text>
-          <line
-            y1="0"
-            y2="${innerHeight / 2 + circleDiameter / 2 - 26}"
-            stroke="var(--Black, #04033A)"
-            stroke-width="0.5"
-          />
-        </g>
+        ${isMobile
+          ? null
+          : html` <g
+              class="average-elements"
+              transform="translate(${scaleXDesktop(avgValue) +
+              circleDiameter / 2}, 20)"
+            >
+              <text
+                class="avg-text"
+                dy="-10"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                avg.
+              </text>
+              <line
+                y1="0"
+                y2="${innerHeight / 2 + circleDiameter / 2 - 26}"
+                stroke="var(--Black, #04033A)"
+                stroke-width="0.5"
+              />
+            </g>`}
         ${Array.from({ length: 10 }, (_, i) => {
           const type = i < data ? "active" : "inactive";
           const color =
             type === "active"
               ? colorMapping[disruptionScale(data)]
               : "transparent";
+          const cx = isMobile
+            ? scaleXMobile(i + 1 <= 5 ? i + 1 : i + 1 - 5) + circleDiameter / 2
+            : scaleXDesktop(i + 1) + circleDiameter / 2;
+          const cy = isMobile
+            ? scaleYMobile(i + 1)
+            : innerHeight / 2 + circleDiameter / 2 - 8;
 
           return html`<circle
-            cx="${scaleX(i + 1) + circleDiameter / 2}"
-            cy="${innerHeight / 2 + circleDiameter / 2 - 8}"
+            cx="${cx}"
+            cy="${cy}"
             r="${circleDiameter / 2}"
             fill="${color}"
             stroke="${type === "active" ? "none" : "#00000075"}"

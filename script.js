@@ -53,6 +53,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Disintermediation",
         data: verticalData["Disintermediation"],
+        isMobile: mobile,
       });
       renderVis({
         id: "vis-service-disruption-data-standardization",
@@ -60,6 +61,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Data standardization",
         data: verticalData["Data standardization"],
+        isMobile: mobile,
       });
       renderVis({
         id: "vis-service-disruption-regulatory-shield",
@@ -67,6 +69,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Regulatory shield",
         data: verticalData["Regulatory shield"],
+        isMobile: mobile,
       });
 
       // replace summary text in Webflow
@@ -76,6 +79,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Overall score",
         data: verticalData["Overall score"],
+        isMobile: mobile,
       });
       renderVis({
         id: "vis-service-disruption-total-label",
@@ -83,6 +87,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Disruption value",
         data: verticalData["Disruption value"],
+        isMobile: mobile,
       });
     }
   }
