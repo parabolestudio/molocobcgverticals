@@ -1,10 +1,11 @@
-import {
-  html,
-  useEffect,
-  useState,
-  scaleThreshold,
-  scalePoint,
-} from "./lib.js";
+import { html, scaleThreshold, scalePoint } from "./lib.js";
+
+// TODO: replace with actual average values
+const averageValues = {
+  Disintermediation: 7,
+  "Data standardization": 6,
+  "Regulatory shield": 4,
+};
 
 export function VisServiceDisruption({ variable, data, isMobile }) {
   console.log("SERVICE DISRUPTION - Loaded data:", variable, data, isMobile);
@@ -20,6 +21,9 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
 
   const circleDiameter = isMobile ? 35 : 40;
   const circleGap = isMobile ? 10 : 15;
+  // TODO: use calculated dimensions for desktop + adjust for mobile to account for the avg element (as soon as real avg values provided)
+  // on mobile, avg might be above or below circles (<5, >5)
+  // how to place when not rounded? in between circles?
   const height = isMobile ? circleDiameter * 2 + circleGap : 70;
   const width = isMobile ? circleDiameter * 5 + 4 * circleGap : 495;
   const margin = { top: 0, right: 5, bottom: 0, left: 5 };
@@ -54,7 +58,7 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     .domain([6, 10])
     .range([circleDiameter / 2, innerHeight - circleDiameter / 2]);
 
-  const avgValue = 8;
+  const avgValue = averageValues[variable];
 
   return html`<div class="service-disruption-container">
     <span class="service-disruption-number">${data}</span>

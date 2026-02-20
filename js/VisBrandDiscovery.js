@@ -1,7 +1,7 @@
-import { html, csv, useEffect, useState, arc, scaleLinear } from "./lib.js";
+import { html, csv, useEffect, useState, arc } from "./lib.js";
 import { REPO_URL } from "./helpers.js";
 
-export function VisBrandDiscovery({ vertical }) {
+export function VisBrandDiscovery({ vertical, isMobile }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export function VisBrandDiscovery({ vertical }) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {
           const verticalData = filteredData[0];
-          console.log("BRAND DISCOVERY - Loaded data:", verticalData);
+          console.log("BRAND DISCOVERY - Loaded data:", verticalData, isMobile);
 
           const data = {
             affiliates: {
@@ -79,12 +79,11 @@ export function VisBrandDiscovery({ vertical }) {
 
   if (!data) return html`<div>Loading data...</div>`;
 
-  const widthLeft = 492;
-  // const widthRight = 293;
-  const heightSemicircle = 288;
-  const heightAnnotationsTop = 63;
-  const widthAnnotationsRight = 207;
-  const widthCurve = 86;
+  const widthLeft = isMobile ? 365 : 492;
+  const heightSemicircle = isMobile ? 213 : 288;
+  const heightAnnotationsTop = isMobile ? 100 : 63;
+  const widthAnnotationsRight = isMobile ? 50 : 207;
+  const widthCurve = isMobile ? 65 : 86;
   const svgWidth = widthLeft + widthCurve + widthAnnotationsRight;
   const svgHeight = heightSemicircle + heightAnnotationsTop;
 
@@ -127,9 +126,9 @@ export function VisBrandDiscovery({ vertical }) {
 
   const innerRadius = heightSemicircle - widthCurve;
   const outerRadius = heightSemicircle;
-  const cx = widthLeft / 2 + widthCurve / 2;
-  const cy = heightSemicircle + heightAnnotationsTop;
-  const arcTransform = `translate(${cx}, ${cy}) rotate(-90)`;
+  const arcTransform = isMobile
+    ? `translate(${0}, ${heightSemicircle}) rotate(0)`
+    : `translate(${widthLeft / 2 + widthCurve / 2}, ${heightSemicircle + heightAnnotationsTop}) rotate(-90)`;
 
   function computeDividerLines() {
     // Compute all channel-boundary angles across the three arc segments
@@ -179,7 +178,27 @@ export function VisBrandDiscovery({ vertical }) {
   const dividerLines = computeDividerLines();
 
   return html`<div>
-    <svg width="${svgWidth}" height="${svgHeight}" style="overflow: visible;">
+    ${isMobile
+      ? html`<div
+          style="display: flex; justify-content: center; align-items: flex-start; gap: 16px; margin-bottom: 16px;"
+        >
+          <p
+            class="ban"
+            style="color: #60E2B7; flex-basis: 156px;flex-shrink: 0;"
+          >
+            ${(totalLow * 100).toFixed(0)}%
+          </p>
+          <p class="ban-label" style="max-width: 220px;">
+            of traffic is organic direct, suggesting strong brand equity
+            provides meaningful insulation.
+          </p>
+        </div>`
+      : null}
+    <svg
+      width="${isMobile ? svgHeight : svgWidth}"
+      height="${isMobile ? svgWidth : svgHeight}"
+      style="overflow: visible;"
+    >
       <path d="${arcGenPartLow()}" fill="#60E2B7" transform="${arcTransform}" />
       <path
         d="${arcGenPartMedium()}"
@@ -206,28 +225,47 @@ export function VisBrandDiscovery({ vertical }) {
         )}
       </g>
     </svg>
-    <div style="display: flex; ">
-      <div
-        style="width: ${widthLeft}px; flex-basis: ${widthLeft}px; flex-shrink: 0;"
-      >
-        <p class="ban" style="color: #60E2B7">
-          ${(totalLow * 100).toFixed(0)}%
-        </p>
-        <p class="ban-label" style="max-width: 220px;">
-          of traffic is organic direct, suggesting strong brand equity provides
-          meaningful insulation.
-        </p>
-      </div>
-      <div>
-        <p class="ban" style="color: #B7A6FF">
-          ${(totalHigh * 100).toFixed(0)}%
-        </p>
-        <p class="ban-label">
-          of FinTech traffic comes from channels facing high disruption, with
-          organic SEO, the foundation of most digital marketing strategies,
-          particularly exposed.
-        </p>
-      </div>
-    </div>
+    ${!isMobile
+      ? html`<div style="display: flex;">
+          <div
+            style="width: ${widthLeft}px; flex-basis: ${widthLeft}px; flex-shrink: 0;"
+          >
+            <p class="ban" style="color: #60E2B7">
+              ${(totalLow * 100).toFixed(0)}%
+            </p>
+            <p class="ban-label" style="max-width: 220px;">
+              of traffic is organic direct, suggesting strong brand equity
+              provides meaningful insulation.
+            </p>
+          </div>
+          <div>
+            <p class="ban" style="color: #B7A6FF">
+              ${(totalHigh * 100).toFixed(0)}%
+            </p>
+            <p class="ban-label">
+              of FinTech traffic comes from channels facing high disruption,
+              with organic SEO, the foundation of most digital marketing
+              strategies, particularly exposed.
+            </p>
+          </div>
+        </div>`
+      : null}
+    ${isMobile
+      ? html`<div
+          style="display: flex; justify-content: center; align-items: flex-start; gap: 16px; margin-bottom: 16px;"
+        >
+          <p
+            class="ban"
+            style="color: #B7A6FF; flex-basis: 156px;flex-shrink: 0;"
+          >
+            ${(totalHigh * 100).toFixed(0)}%
+          </p>
+          <p class="ban-label" style="max-width: 220px;">
+            of FinTech traffic comes from channels facing high disruption, with
+            organic SEO, the foundation of most digital marketing strategies,
+            particularly exposed.
+          </p>
+        </div>`
+      : null}
   </div>`;
 }

@@ -34,6 +34,7 @@ renderVis({
   id: "vis-brand-discovery",
   component: VisBrandDiscovery,
   vertical: customChartsConfig.vertical || null,
+  isMobile: mobile,
 });
 
 // SERVICE DISRUPTION
@@ -50,7 +51,6 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       renderVis({
         id: "vis-service-disruption-disintermediation",
         component: VisServiceDisruption,
-        vertical: customChartsConfig.vertical || null,
         variable: "Disintermediation",
         data: verticalData["Disintermediation"],
         isMobile: mobile,
@@ -58,7 +58,6 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       renderVis({
         id: "vis-service-disruption-data-standardization",
         component: VisServiceDisruption,
-        vertical: customChartsConfig.vertical || null,
         variable: "Data standardization",
         data: verticalData["Data standardization"],
         isMobile: mobile,
@@ -66,7 +65,6 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       renderVis({
         id: "vis-service-disruption-regulatory-shield",
         component: VisServiceDisruption,
-        vertical: customChartsConfig.vertical || null,
         variable: "Regulatory shield",
         data: verticalData["Regulatory shield"],
         isMobile: mobile,
