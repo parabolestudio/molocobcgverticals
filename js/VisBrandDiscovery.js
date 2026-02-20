@@ -4,7 +4,7 @@ export function VisBrandDiscovery({ vertical }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    csv(`./data/data_brand_discovery.csv`).then((rawData) => {
+    csv(`${REPO_URL}/data/data_brand_discovery.csv`).then((rawData) => {
       if (vertical) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {

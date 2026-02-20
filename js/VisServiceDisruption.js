@@ -1,10 +1,11 @@
 import { html, csv, useEffect, useState } from "./lib.js";
+import { REPO_URL } from "./helpers.js";
 
 export function VisServiceDisruption({ vertical, variable }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    csv(`./data/data_service_disruption.csv`).then((rawData) => {
+    csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       if (vertical) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {
