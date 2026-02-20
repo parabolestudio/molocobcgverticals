@@ -16,9 +16,43 @@ export function VisBrandDiscovery({ vertical }) {
     });
   }, []);
 
+  const widthLeft = 492;
+  // const widthRight = 293;
+  const heightSemicircle = 288;
+  const heightAnnotationsTop = 63;
+  const widthAnnotationsRight = 207;
+  const widthCurve = 86;
+  const svgWidth = widthLeft + widthCurve + widthAnnotationsRight;
+  const svgHeight = heightSemicircle + heightAnnotationsTop;
+
   console.log("BRAND DISCOVERY - Loaded data:", data);
 
   if (!data) return html`<div>Loading data...</div>`;
 
-  return html`<div>Coded Brand Discovery Visualization for ${vertical}</div>`;
+  return html`<div>
+    <svg
+      width="${svgWidth}"
+      height="${svgHeight}"
+      style="background: #f2f2f2;"
+    ></svg>
+    <div style="display: flex; ">
+      <div
+        style="width: ${widthLeft}px; flex-basis: ${widthLeft}px; flex-shrink: 0;"
+      >
+        <p class="ban" style="color: #60E2B7">64%</p>
+        <p class="ban-label" style="max-width: 220px;">
+          of traffic is organic direct, suggesting strong brand equity provides
+          meaningful insulation.
+        </p>
+      </div>
+      <div>
+        <p class="ban" style="color: #B7A6FF">24%</p>
+        <p class="ban-label">
+          of FinTech traffic comes from channels facing high disruption, with
+          organic SEO, the foundation of most digital marketing strategies,
+          particularly exposed.
+        </p>
+      </div>
+    </div>
+  </div>`;
 }
