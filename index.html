@@ -81,6 +81,15 @@
         margin-top: 45px;
         margin-bottom: 5px;
       }
+      .site-container {
+        width: 874px;
+        margin: 0 auto;
+        background-color: #fff;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+      }
     </style>
     <script>
       window.customChartsConfig = {
@@ -95,13 +104,13 @@
     />
   </head>
   <body>
-    <div style="width: 874px; margin: 0 auto; background-color: #fff">
+    <div class="site-container">
       <h1>Moloco BCG Verticals</h1>
       <div>
         <h3>Vis Quadrant</h3>
         <div id="vis-quadrant"></div>
       </div>
-      <div>
+      <!-- <div>
         <h3>Vis Brand Discovery</h3>
         <div id="vis-brand-discovery" style="background-color: #12508c"></div>
       </div>
@@ -116,7 +125,7 @@
           <p id="vis-service-disruption-total-score">XX</p>
           <p id="vis-service-disruption-total-label">xxx disruption</p>
         </div>
-      </div>
+      </div> -->
       <div>
         <h3>Vis Customer Relationships</h3>
         <div

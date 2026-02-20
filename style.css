@@ -81,6 +81,10 @@
     font-style: normal;
     font-weight: 700;
     line-height: 119.965%; /* 115.167px */
+
+    @media (max-width: 768px) {
+      font-size: 72px;
+    }
   }
 
   .average-label {

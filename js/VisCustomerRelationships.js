@@ -55,28 +55,36 @@ const groupings = {
   ],
 };
 
-// TODO: replace with actual average value for the vertical
+// TODO: replace with actual average values
 const averageValues = {
   "Acquisition strength": 7.25,
   "Sustained loyalty": 6.75,
   "Platform engagement depth": 7.5,
 };
 
-export function VisCustomerRelationships({ id, vertical, variable, data }) {
-  console.log("CUSTOMER RELATIONSHIPS - Loaded data:", variable, data);
+export function VisCustomerRelationships({ id, variable, data, isMobile }) {
+  console.log(
+    "CUSTOMER RELATIONSHIPS - Loaded data:",
+    variable,
+    data,
+    isMobile,
+  );
 
   if (!data) return html`<div>Loading data...</div>`;
 
   // vis dimensions
   const visContainer = document.querySelector(`#${id}`);
-  const width =
+  let width =
     visContainer && visContainer.offsetWidth ? visContainer.offsetWidth : 600;
+  if (isMobile) {
+    width = Math.min(width, 280); // set a max width for mobile to maintain aspect ratio
+  }
   const aspectRatio = 352 / 160; // width:height ratio
   const height = width / aspectRatio;
-  const margin = { top: 0, right: 18, bottom: 0, left: 18 };
+  const margin = { top: 0, right: 25, bottom: 0, left: 25 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
-  const arcWidth = 30;
+  const arcWidth = isMobile ? 25 : 30;
 
   const groups = groupings[variable];
 
@@ -196,6 +204,7 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
           <text
             x="${innerWidth + margin.right}"
             y="${innerHeight - 5}"
+            dx="${isMobile ? "2" : "0"}"
             text-anchor="end"
             class="axis-text"
           >

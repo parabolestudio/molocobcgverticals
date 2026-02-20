@@ -10,6 +10,18 @@ import { VisCustomerRelationships } from "./js/VisCustomerRelationships.js";
 // detect vertical from global config (embed code in head)
 customChartsConfig = window.customChartsConfig || {};
 
+// detect mobile for conditional rendering
+const mobile = window.innerWidth <= 768;
+console.log("Is mobile:", mobile, window.innerWidth);
+
+// re-render on window resize to handle mobile/desktop switch
+window.addEventListener("resize", () => {
+  const isNowMobile = window.innerWidth <= 768;
+  if (isNowMobile !== mobile) {
+    location.reload();
+  }
+});
+
 // QUADRANT
 renderVis({
   id: "vis-quadrant",
@@ -92,6 +104,7 @@ csv(`${REPO_URL}/data/data_customer_relationships.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Acquisition strength",
         data: verticalData["Acquisition strength"],
+        isMobile: mobile,
       });
       renderVis({
         id: "vis-customer-relationship-sustained-loyalty",
@@ -99,6 +112,7 @@ csv(`${REPO_URL}/data/data_customer_relationships.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Sustained loyalty",
         data: verticalData["Sustained loyalty"],
+        isMobile: mobile,
       });
       renderVis({
         id: "vis-customer-relationship-platform-engagement-depth",
@@ -106,6 +120,7 @@ csv(`${REPO_URL}/data/data_customer_relationships.csv`).then((rawData) => {
         vertical: customChartsConfig.vertical || null,
         variable: "Platform engagement depth",
         data: verticalData["Platform engagement depth"],
+        isMobile: mobile,
       });
     }
   }
