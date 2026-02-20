@@ -1,3 +1,16 @@
+#vis-quadrant {
+  .hidden {
+    opacity: 0;
+  }
+  .shown {
+    opacity: 1;
+  }
+  .verticals .vertical,
+  .quadrant-highlight {
+    transition: opacity 0.3s ease-in-out;
+  }
+}
+
 #vis-brand-discovery {
   max-width: 788px;
 
