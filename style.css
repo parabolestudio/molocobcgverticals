@@ -25,3 +25,22 @@
     line-height: 119.965%; /* 115.167px */
   }
 }
+
+.service-disruption-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .service-disruption-number {
+    flex-basis: 70px;
+
+    color: var(--Black, #04033a);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: MuseoModerno;
+    font-size: 96px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 119.965%; /* 115.167px */
+  }
+}

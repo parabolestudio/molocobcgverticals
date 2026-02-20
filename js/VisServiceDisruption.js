@@ -12,8 +12,11 @@ export function VisServiceDisruption({ vertical, variable, data }) {
     return html`<span>${data} disruption</span>`;
   }
 
-  return html`<div>
-    Coded Service Disruption Visualization for ${vertical} and ${" "}
-    ${variable}
+  const height = 75;
+  const width = 250;
+
+  return html`<div class="service-disruption-container">
+    <span class="service-disruption-number">${data}</span>
+    <svg width="${width}" height="${height}" style="background: #f2f2f2;"></svg>
   </div>`;
 }
