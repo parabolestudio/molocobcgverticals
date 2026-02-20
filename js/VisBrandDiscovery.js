@@ -93,7 +93,7 @@ export function VisBrandDiscovery({ vertical }) {
   const dataLow = Object.values(data).filter((d) => d.type === "low");
   const dataMedium = Object.values(data).filter((d) => d.type === "medium");
   const dataHigh = Object.values(data).filter((d) => d.type === "high");
-  const groupedData = { low: dataLow, medium: dataMedium, high: dataHigh };
+  // const groupedData = { low: dataLow, medium: dataMedium, high: dataHigh };
   console.log("BRAND DISCOVERY - Low disruption channels:", dataLow);
   console.log("BRAND DISCOVERY - Medium disruption channels:", dataMedium);
   console.log("BRAND DISCOVERY - High disruption channels:", dataHigh);

@@ -1,4 +1,59 @@
-import { html, useEffect, useState } from "./lib.js";
+import { html, arc, scaleLinear } from "./lib.js";
+
+const groupings = {
+  "Acquisition strength": [
+    {
+      type: "low",
+      min: 0,
+      max: 6.9,
+    },
+    {
+      type: "medium",
+      min: 7,
+      max: 8.5,
+    },
+    {
+      type: "high",
+      min: 8.6,
+      max: 10,
+    },
+  ],
+  "Sustained loyalty": [
+    {
+      type: "low",
+      min: 0,
+      max: 6.0,
+    },
+    {
+      type: "medium",
+      min: 6.1,
+      max: 7.6,
+    },
+    {
+      type: "high",
+      min: 7.7,
+      max: 10,
+    },
+  ],
+  // TODO: check values for these groupings
+  "Platform engagement depth": [
+    {
+      type: "low",
+      min: 0,
+      max: 6.9,
+    },
+    {
+      type: "medium",
+      min: 7,
+      max: 8.5,
+    },
+    {
+      type: "high",
+      min: 8.6,
+      max: 10,
+    },
+  ],
+};
 
 export function VisCustomerRelationships({ id, vertical, variable, data }) {
   console.log("CUSTOMER RELATIONSHIPS - Loaded data:", variable, data);
@@ -14,6 +69,26 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
   const margin = { top: 0, right: 18, bottom: 0, left: 18 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
+  const arcWidth = 30;
+
+  const groups = groupings[variable];
+
+  // angle scale
+  const angleScale = scaleLinear().domain([0, 1]).range([0, Math.PI]);
+
+  // loop over all groups and calculate arc attributes
+  const arcs = groups.map((group) => {
+    const startAngle = angleScale((group.min - 0) / 10);
+    const endAngle = angleScale((group.max - 0) / 10);
+
+    const arcGen = arc()
+      .innerRadius(innerHeight - arcWidth)
+      .outerRadius(innerHeight)
+      .startAngle(startAngle)
+      .endAngle(endAngle);
+
+    return { type: group.type, arcGen };
+  });
 
   return html`<div class="customer-relationships-container">
     <svg width="${width}" height="${height}">
@@ -60,15 +135,19 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
         >
           ${data}
         </text>
-        <path
-          d="
-            M ${0} ${innerHeight}
-            A 50 50 0 0 1 ${innerWidth} ${innerHeight}
-          "
-          fill="none"
-          stroke="#04033A"
-          stroke-width="3"
-        />
+        <g class="arcs">
+          ${arcs.map(({ type, arcGen }) => {
+            let fill;
+            if (type === "low") fill = "#0280FB";
+            else if (type === "medium") fill = "#D9D9D9";
+            else if (type === "high") fill = "#60E2B7";
+            return html`<path
+              d="${arcGen()}"
+              fill="${fill}"
+              transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+            />`;
+          })}
+        </g>
       </g>
     </svg>
   </div>`;
