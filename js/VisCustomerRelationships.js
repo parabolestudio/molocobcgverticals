@@ -73,7 +73,7 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     visContainer && visContainer.offsetWidth ? visContainer.offsetWidth : 600;
   const aspectRatio = 352 / 160; // width:height ratio
   const height = width / aspectRatio;
-  const margin = { top: 10, right: 18, bottom: 0, left: 18 };
+  const margin = { top: 0, right: 18, bottom: 0, left: 18 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
   const arcWidth = 30;
