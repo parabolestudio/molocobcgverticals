@@ -90,6 +90,19 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     return { type: group.type, arcGen };
   });
 
+  const dataAngle = angleScale((data - 0) / 10);
+  const dataElement = {
+    arc: arc()
+      .innerRadius(innerHeight - arcWidth / 2)
+      .outerRadius(innerHeight - arcWidth / 2)
+      .startAngle(0)
+      .endAngle(dataAngle),
+    circlePosition: {
+      x: (innerHeight - arcWidth / 2) * Math.cos(dataAngle - Math.PI / 2),
+      y: (innerHeight - arcWidth / 2) * Math.sin(dataAngle - Math.PI / 2),
+    },
+  };
+
   return html`<div class="customer-relationships-container">
     <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
@@ -148,6 +161,20 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
             />`;
           })}
         </g>
+        <path
+          d="${dataElement.arc()}"
+          fill="#04033A"
+          transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+          stroke="#04033A"
+          stroke-width="3"
+        />
+        <circle
+          cx="${dataElement.circlePosition.x}"
+          cy="${dataElement.circlePosition.y}"
+          r="6"
+          fill="#04033A"
+          transform="${`translate(${innerWidth / 2}, ${innerHeight})  rotate(-90)`}"
+        />
       </g>
     </svg>
   </div>`;
