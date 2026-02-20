@@ -97,6 +97,18 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
     return { type: group.type, arcGen };
   });
 
+  const arcGradientOffset = 0.5;
+  // Compute gradient for low arc
+  const lowGroup = groups.find((g) => g.type === "low");
+  const lowEndAngle = angleScale((lowGroup.max + arcGradientOffset) / 10);
+  const gradientRadius = innerHeight - arcWidth / 2;
+  const lowGradientId = `lowGradient-${id}`;
+
+  // Compute gradient for high arc
+  const highGroup = groups.find((g) => g.type === "high");
+  const highStartAngle = angleScale((highGroup.min - arcGradientOffset) / 10);
+  const highGradientId = `highGradient-${id}`;
+
   // calculate data arc attributes (for line and circle)
   const dataAngle = angleScale((data - 0) / 10);
   const dataElement = {
@@ -112,7 +124,6 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
   };
 
   // calculate average line
-
   const averageValue = averageValues[variable];
   const averageAngle = angleScale((averageValue - 0) / 10);
   const averageLineMargin = 12;
@@ -137,55 +148,74 @@ export function VisCustomerRelationships({ id, vertical, variable, data }) {
 
   return html`<div class="customer-relationships-container">
     <svg width="${width}" height="${height}">
+      <defs>
+        <linearGradient
+          id="${lowGradientId}"
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          y1="${-gradientRadius}"
+          x2="${gradientRadius * Math.sin(lowEndAngle)}"
+          y2="${-gradientRadius * Math.cos(lowEndAngle)}"
+        >
+          <stop offset="0%" stop-color="#0280FB" />
+          <stop offset="100%" stop-color="#DBDBDB" />
+        </linearGradient>
+        <linearGradient
+          id="${highGradientId}"
+          gradientUnits="userSpaceOnUse"
+          x1="${gradientRadius * Math.sin(highStartAngle)}"
+          y1="${-gradientRadius * Math.cos(highStartAngle)}"
+          x2="0"
+          y2="${gradientRadius}"
+        >
+          <stop offset="0%" stop-color="#DBDBDB" />
+          <stop offset="100%" stop-color="#60E2B7" />
+        </linearGradient>
+      </defs>
       <g transform="translate(${margin.left}, ${margin.top})">
-        <rect
-          x="0"
-          y="0"
-          width="${innerWidth}"
-          height="${innerHeight}"
-          fill="transparent"
-        />
-        <line
-          x1="${-margin.left}"
-          y1="${innerHeight - 1}"
-          x2="${0}"
-          y2="${innerHeight - 1}"
-          stroke-width="1.5"
-          class="axis-line"
-        />
-        <line
-          x1="${innerWidth}"
-          y1="${innerHeight - 1}"
-          x2="${innerWidth + margin.right}"
-          y2="${innerHeight - 1}"
-          stroke-width="1.5"
-          class="axis-line"
-        />
-        <text x="${-margin.left}" y="${innerHeight - 5}" class="axis-text">
-          0
-        </text>
-        <text
-          x="${innerWidth + margin.right}"
-          y="${innerHeight - 5}"
-          text-anchor="end"
-          class="axis-text"
-        >
-          10
-        </text>
-        <text
-          x="${innerWidth / 2}"
-          y="${innerHeight - 5}"
-          text-anchor="middle"
-          class="ban"
-        >
-          ${data}
-        </text>
+        <g class="periphery-elements">
+          <line
+            x1="${-margin.left}"
+            y1="${innerHeight - 1}"
+            x2="${0}"
+            y2="${innerHeight - 1}"
+            stroke-width="1.5"
+            class="axis-line"
+          />
+          <line
+            x1="${innerWidth}"
+            y1="${innerHeight - 1}"
+            x2="${innerWidth + margin.right}"
+            y2="${innerHeight - 1}"
+            stroke-width="1.5"
+            class="axis-line"
+          />
+          <text x="${-margin.left}" y="${innerHeight - 5}" class="axis-text">
+            0
+          </text>
+          <text
+            x="${innerWidth + margin.right}"
+            y="${innerHeight - 5}"
+            text-anchor="end"
+            class="axis-text"
+          >
+            10
+          </text>
+          <text
+            x="${innerWidth / 2}"
+            y="${innerHeight - 5}"
+            text-anchor="middle"
+            class="ban"
+          >
+            ${data}
+          </text>
+        </g>
         <g class="arcs">
           ${arcs.map(({ type, arcGen }) => {
             let fill;
-            if (type === "low") fill = "#0280FB";
+            if (type === "low") fill = `url(#${lowGradientId})`;
             else if (type === "medium") fill = "#D9D9D9";
-            else if (type === "high") fill = "#60E2B7";
+            else if (type === "high") fill = `url(#${highGradientId})`;
             return html`<path
               d="${arcGen()}"
               fill="${fill}"
