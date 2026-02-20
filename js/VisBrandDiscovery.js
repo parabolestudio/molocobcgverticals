@@ -1,4 +1,4 @@
-import { html, csv, useEffect, useState } from "./lib.js";
+import { html, csv, useEffect, useState, arc } from "./lib.js";
 import { REPO_URL } from "./helpers.js";
 
 export function VisBrandDiscovery({ vertical }) {
@@ -16,7 +16,7 @@ export function VisBrandDiscovery({ vertical }) {
             affiliates: {
               value: +verticalData["Affiliates"],
               label: "Affiliates",
-              type: "low", // TODO: check
+              type: "medium", // TODO: check
             },
             display: {
               value: +verticalData["Display"],
@@ -70,6 +70,8 @@ export function VisBrandDiscovery({ vertical }) {
     });
   }, []);
 
+  if (!data) return html`<div>Loading data...</div>`;
+
   const widthLeft = 492;
   // const widthRight = 293;
   const heightSemicircle = 288;
@@ -81,27 +83,73 @@ export function VisBrandDiscovery({ vertical }) {
 
   console.log("BRAND DISCOVERY - Formatted data:", data);
 
-  const totalLow = data
-    ? Object.values(data)
-        .filter((d) => d.type === "low")
-        .reduce((sum, d) => sum + d.value, 0)
-    : 0;
-  const totalHigh = data
-    ? Object.values(data)
-        .filter((d) => d.type === "high")
-        .reduce((sum, d) => sum + d.value, 0)
-    : 0;
+  const dataLow = Object.values(data).filter((d) => d.type === "low");
+  const dataMedium = Object.values(data).filter((d) => d.type === "medium");
+  const dataHigh = Object.values(data).filter((d) => d.type === "high");
+  console.log("BRAND DISCOVERY - Low disruption channels:", dataLow);
+  console.log("BRAND DISCOVERY - Medium disruption channels:", dataMedium);
+  console.log("BRAND DISCOVERY - High disruption channels:", dataHigh);
+
+  const totalLow = dataLow.reduce((sum, d) => sum + d.value, 0);
+  const totalMedium = dataMedium.reduce((sum, d) => sum + d.value, 0);
+  const totalHigh = dataHigh.reduce((sum, d) => sum + d.value, 0);
   console.log("BRAND DISCOVERY - Total low:", totalLow);
+  console.log("BRAND DISCOVERY - Total medium:", totalMedium);
   console.log("BRAND DISCOVERY - Total high:", totalHigh);
 
-  if (!data) return html`<div>Loading data...</div>`;
+  // const arcGenerator = arc()
+  //   .innerRadius(heightSemicircle - widthCurve)
+  //   .outerRadius(heightSemicircle)
+  //   .startAngle(0)
+  //   .endAngle(Math.PI);
+
+  const arcGenPartLow = arc()
+    .innerRadius(heightSemicircle - widthCurve)
+    .outerRadius(heightSemicircle)
+    .startAngle(0)
+    .endAngle(Math.PI * (totalLow / (totalLow + totalHigh)));
+
+  const arcGenPartMedium = arc()
+    .innerRadius(heightSemicircle - widthCurve)
+    .outerRadius(heightSemicircle)
+    .startAngle(Math.PI * (totalLow / (totalLow + totalHigh)))
+    .endAngle(
+      Math.PI *
+        ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh)),
+    );
+  const arcGenPartHigh = arc()
+    .innerRadius(heightSemicircle - widthCurve)
+    .outerRadius(heightSemicircle)
+    .startAngle(
+      Math.PI *
+        ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh)),
+    )
+    .endAngle(Math.PI);
 
   return html`<div>
-    <svg
-      width="${svgWidth}"
-      height="${svgHeight}"
-      style="background: #f2f2f2;"
-    ></svg>
+    <svg width="${svgWidth}" height="${svgHeight}" style="overflow: visible;">
+      <path
+        d="${arcGenPartLow()}"
+        fill="#60E2B7"
+        transform="translate(${widthLeft / 2 +
+        widthCurve / 2}, ${heightSemicircle +
+        heightAnnotationsTop}) rotate(-90)"
+      />
+      <path
+        d="${arcGenPartMedium()}"
+        fill="#F2F2F2"
+        transform="translate(${widthLeft / 2 +
+        widthCurve / 2}, ${heightSemicircle +
+        heightAnnotationsTop}) rotate(-90)"
+      />
+      <path
+        d="${arcGenPartHigh()}"
+        fill="#B7A6FF"
+        transform="translate(${widthLeft / 2 +
+        widthCurve / 2}, ${heightSemicircle +
+        heightAnnotationsTop}) rotate(-90)"
+      />
+    </svg>
     <div style="display: flex; ">
       <div
         style="width: ${widthLeft}px; flex-basis: ${widthLeft}px; flex-shrink: 0;"

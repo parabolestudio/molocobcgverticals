@@ -7,6 +7,7 @@ import {
   scaleThreshold,
   scalePoint,
 } from "https://esm.sh/d3-scale";
+import { arc } from "https://esm.sh/d3-shape";
 
 function renderVis(vis) {
   const containerElement = document.getElementById(vis.id);
@@ -34,5 +35,6 @@ export {
   scaleLinear,
   scaleThreshold,
   scalePoint,
+  arc,
   renderVis,
 };
