@@ -1,4 +1,4 @@
-import { html, csv, useEffect, useState, arc } from "./lib.js";
+import { html, csv, useEffect, useState, arc, scaleLinear } from "./lib.js";
 import { REPO_URL } from "./helpers.js";
 
 export function VisBrandDiscovery({ vertical }) {
@@ -64,6 +64,13 @@ export function VisBrandDiscovery({ vertical }) {
               type: "medium",
             },
           };
+          // filter out channels with 0% contribution to avoid cluttering the viz with irrelevant labels
+          Object.keys(data).forEach((key) => {
+            if (data[key].value === 0) {
+              delete data[key];
+            }
+          });
+
           setData(data);
         }
       }
@@ -86,6 +93,7 @@ export function VisBrandDiscovery({ vertical }) {
   const dataLow = Object.values(data).filter((d) => d.type === "low");
   const dataMedium = Object.values(data).filter((d) => d.type === "medium");
   const dataHigh = Object.values(data).filter((d) => d.type === "high");
+  const groupedData = { low: dataLow, medium: dataMedium, high: dataHigh };
   console.log("BRAND DISCOVERY - Low disruption channels:", dataLow);
   console.log("BRAND DISCOVERY - Medium disruption channels:", dataMedium);
   console.log("BRAND DISCOVERY - High disruption channels:", dataHigh);
@@ -93,15 +101,6 @@ export function VisBrandDiscovery({ vertical }) {
   const totalLow = dataLow.reduce((sum, d) => sum + d.value, 0);
   const totalMedium = dataMedium.reduce((sum, d) => sum + d.value, 0);
   const totalHigh = dataHigh.reduce((sum, d) => sum + d.value, 0);
-  console.log("BRAND DISCOVERY - Total low:", totalLow);
-  console.log("BRAND DISCOVERY - Total medium:", totalMedium);
-  console.log("BRAND DISCOVERY - Total high:", totalHigh);
-
-  // const arcGenerator = arc()
-  //   .innerRadius(heightSemicircle - widthCurve)
-  //   .outerRadius(heightSemicircle)
-  //   .startAngle(0)
-  //   .endAngle(Math.PI);
 
   const arcGenPartLow = arc()
     .innerRadius(heightSemicircle - widthCurve)
@@ -126,29 +125,86 @@ export function VisBrandDiscovery({ vertical }) {
     )
     .endAngle(Math.PI);
 
+  const innerRadius = heightSemicircle - widthCurve;
+  const outerRadius = heightSemicircle;
+  const cx = widthLeft / 2 + widthCurve / 2;
+  const cy = heightSemicircle + heightAnnotationsTop;
+  const arcTransform = `translate(${cx}, ${cy}) rotate(-90)`;
+
+  function computeDividerLines() {
+    // Compute all channel-boundary angles across the three arc segments
+    const dividerAngles = [];
+
+    // Use the exact same angle formulas as the arc generators
+    const lowStart = 0;
+    const lowEnd = Math.PI * (totalLow / (totalLow + totalHigh));
+    let cumLow = 0;
+    for (let i = 0; i < dataLow.length - 1; i++) {
+      cumLow += dataLow[i].value;
+      dividerAngles.push(lowStart + (lowEnd - lowStart) * (cumLow / totalLow));
+    }
+    dividerAngles.push(lowEnd); // boundary between low and medium
+
+    const medStart = lowEnd;
+    const medEnd =
+      Math.PI *
+      ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh));
+    let cumMed = 0;
+    for (let i = 0; i < dataMedium.length - 1; i++) {
+      cumMed += dataMedium[i].value;
+      dividerAngles.push(
+        medStart + (medEnd - medStart) * (cumMed / totalMedium),
+      );
+    }
+    dividerAngles.push(medEnd); // boundary between medium and high
+
+    const highStart = medEnd;
+    const highEnd = Math.PI;
+    let cumHigh = 0;
+    for (let i = 0; i < dataHigh.length - 1; i++) {
+      cumHigh += dataHigh[i].value;
+      dividerAngles.push(
+        highStart + (highEnd - highStart) * (cumHigh / totalHigh),
+      );
+    }
+
+    // Convert each angle to a radial line (D3 arc coords: x = r·sin(a), y = -r·cos(a))
+    return dividerAngles.map((a) => ({
+      x1: innerRadius * Math.sin(a),
+      y1: -innerRadius * Math.cos(a),
+      x2: outerRadius * Math.sin(a),
+      y2: -outerRadius * Math.cos(a),
+    }));
+  }
+  const dividerLines = computeDividerLines();
+
   return html`<div>
     <svg width="${svgWidth}" height="${svgHeight}" style="overflow: visible;">
-      <path
-        d="${arcGenPartLow()}"
-        fill="#60E2B7"
-        transform="translate(${widthLeft / 2 +
-        widthCurve / 2}, ${heightSemicircle +
-        heightAnnotationsTop}) rotate(-90)"
-      />
+      <path d="${arcGenPartLow()}" fill="#60E2B7" transform="${arcTransform}" />
       <path
         d="${arcGenPartMedium()}"
         fill="#F2F2F2"
-        transform="translate(${widthLeft / 2 +
-        widthCurve / 2}, ${heightSemicircle +
-        heightAnnotationsTop}) rotate(-90)"
+        transform="${arcTransform}"
       />
       <path
         d="${arcGenPartHigh()}"
         fill="#B7A6FF"
-        transform="translate(${widthLeft / 2 +
-        widthCurve / 2}, ${heightSemicircle +
-        heightAnnotationsTop}) rotate(-90)"
+        transform="${arcTransform}"
       />
+      <g class="divider-lines">
+        ${dividerLines.map(
+          ({ x1, y1, x2, y2 }) =>
+            html`<line
+              x1="${x1}"
+              y1="${y1}"
+              x2="${x2}"
+              y2="${y2}"
+              stroke="#04033A"
+              stroke-width="1"
+              transform="${arcTransform}"
+            />`,
+        )}
+      </g>
     </svg>
     <div style="display: flex; ">
       <div
