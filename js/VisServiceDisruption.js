@@ -12,11 +12,25 @@ export function VisServiceDisruption({ vertical, variable, data }) {
     return html`<span>${data} disruption</span>`;
   }
 
-  const height = 75;
+  const height = 80;
   const width = 250;
+  const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const circleDiameter = 40;
 
   return html`<div class="service-disruption-container">
     <span class="service-disruption-number">${data}</span>
-    <svg width="${width}" height="${height}" style="background: #f2f2f2;"></svg>
+    <svg width="${width}" height="${height}" style="background: #f2f2f2;">
+      <g transform="translate(${margin.left}, ${margin.top})">
+        <circle
+          cx="100"
+          cy="${innerHeight / 2 + circleDiameter / 2}"
+          r="${circleDiameter / 2}"
+          fill="#D9D9D9"
+        />
+      </g>
+    </svg>
   </div>`;
 }
