@@ -2,8 +2,7 @@
   .vis-hidden {
     opacity: 0;
   }
-  .verticals .vertical,
-  .quadrant-highlight {
+  .verticals .vertical {
     transition: opacity 0.3s ease-in-out;
   }
 }

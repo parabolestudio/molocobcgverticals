@@ -14,9 +14,10 @@ export function VisQuadrant({ vertical, isMobile }) {
           class="a"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0280FB" />
-          <stop offset=".66" stop-color="#AED7FF" />
-          <stop offset=".995" stop-color="#fff" />
+          <stop offset="0" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" class="gradient-stop-mask" />
+          <stop offset="1" stop-color="#0280FB" class="gradient-stop-blue" />
+          <stop offset="1" stop-color="#fff" />
         </linearGradient>
       </defs>
       <g class="QuadrantChart desktop">
@@ -592,9 +593,15 @@ export function VisQuadrant({ vertical, isMobile }) {
           class="a"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0280FB" />
-          <stop offset=".66" stop-color="#AED7FF" />
-          <stop offset=".995" stop-color="#fff" />
+          <stop offset="0" stop-color="#fff" />
+          <stop offset="1" stop-color="#fff" class="gradient-stop-mask" />
+          <stop offset="1" stop-color="#0280FB" class="gradient-stop-blue" />
+          <stop
+            offset="1"
+            stop-color="#AED7FF"
+            class="gradient-stop-lightblue"
+          />
+          <stop offset="1" stop-color="#fff" />
         </linearGradient>
       </defs>
       <g class="QuadrantChart mobile">
@@ -1069,7 +1076,6 @@ export function VisQuadrant({ vertical, isMobile }) {
   `;
 
   const appearanceOrder = [
-    { class: "quadrant-highlight", type: null },
     { class: "Dating", type: "vertical" },
     { class: "Gaming", type: "vertical" },
     { class: "Gen-AI", type: "vertical" },
@@ -1109,6 +1115,39 @@ export function VisQuadrant({ vertical, isMobile }) {
   const onVisible = () => {
     console.log("VisQuadrant is visible", vertical);
 
+    // Animate gradient offset sweep: blue comes from bottom-left to top-right
+    setTimeout(() => {
+      const duration = 2000;
+      const startTime = performance.now();
+      const maskStop = document.querySelector(".gradient-stop-mask");
+      const blueStop = document.querySelector(".gradient-stop-blue");
+      const lightBlueStop = document.querySelector(".gradient-stop-lightblue");
+      if (!maskStop || !blueStop) return;
+
+      const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+      const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const rawProgress = Math.min(elapsed / duration, 1);
+        const progress = easeOutCubic(rawProgress);
+
+        const sweepOffset = 1 - progress;
+        maskStop.setAttribute("offset", sweepOffset);
+        blueStop.setAttribute("offset", sweepOffset);
+
+        if (lightBlueStop) {
+          const lbOffset = 1 - progress * 0.34;
+          lightBlueStop.setAttribute("offset", lbOffset);
+        }
+
+        if (rawProgress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }, 0);
+
     // loop over verticalsInOrder and remove hidden class from element with delay
     appearanceOrder.forEach((el, index) => {
       setTimeout(() => {
@@ -1123,7 +1162,7 @@ export function VisQuadrant({ vertical, isMobile }) {
         if (element) {
           element.classList.remove("vis-hidden");
         }
-      }, index * 100);
+      }, index * 80);
     });
   };
 
@@ -1132,14 +1171,10 @@ export function VisQuadrant({ vertical, isMobile }) {
     onVisible: () => onVisible(),
   });
 
-  // initially set verticals and quadrant-highlight to invisible, by adding class hidden to them
+  // initially set verticals to invisible, by adding class hidden to them
   useEffect(() => {
     const verticals = document.querySelectorAll(".vertical");
     verticals.forEach((vertical) => vertical.classList.add("vis-hidden"));
-    const quadrantHighlight = document.querySelectorAll(".quadrant-highlight");
-    quadrantHighlight.forEach((highlight) =>
-      highlight.classList.add("vis-hidden"),
-    );
   }, []);
 
   return html`<div ref=${containerRef}>
