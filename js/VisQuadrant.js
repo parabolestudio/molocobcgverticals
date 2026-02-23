@@ -1151,16 +1151,23 @@ export function VisQuadrant({ vertical, isMobile }) {
     // loop over verticalsInOrder and remove hidden class from element with delay
     appearanceOrder.forEach((el, index) => {
       setTimeout(() => {
-        const typeExtended =
-          el.type === "vertical" && el.class === verticalMapping[vertical]
-            ? "vertical.active"
-            : el.type;
+        const isActiveVertical =
+          el.type === "vertical" && el.class === verticalMapping[vertical];
+        const typeExtended = isActiveVertical ? "vertical.active" : el.type;
         const selector = typeExtended
           ? `.${typeExtended}.${el.class}`
           : `.${el.class}`;
         const element = document.querySelector(selector);
         if (element) {
-          element.classList.remove("vis-hidden");
+          if (isActiveVertical) {
+            const bbox = element.getBBox();
+            const cx = bbox.x + bbox.width / 2;
+            const cy = bbox.y + bbox.height / 2;
+            element.style.transformOrigin = `${cx}px ${cy}px`;
+            element.classList.add("vis-highlight");
+          } else {
+            element.classList.remove("vis-hidden");
+          }
         }
       }, index * 80);
     });
