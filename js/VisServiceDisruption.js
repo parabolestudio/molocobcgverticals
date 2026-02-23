@@ -75,7 +75,7 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
           const cx = bbox.x + bbox.width / 2;
           const cy = bbox.y + bbox.height / 2;
           element.style.transformOrigin = `${cx}px ${cy}px`;
-          element.classList.add("vis-highlight");
+          element.classList.add("vis-highlight-circles");
         }
       }, i * 80);
     });
