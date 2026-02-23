@@ -111,6 +111,9 @@
   svg {
     overflow: visible;
   }
+  .data-circle {
+    transition: opacity 0.3s ease-out;
+  }
 
   .axis-line {
     stroke: var(--Black, #04033a);
@@ -129,13 +132,14 @@
   }
   .ban {
     color: var(--Black, #04033a);
+    transition: opacity 0.3s ease-out;
 
-    /* Big numbers */
     font-family: MuseoModerno;
     font-size: 96px;
     font-style: normal;
     font-weight: 700;
     line-height: 119.965%; /* 115.167px */
+    transition: opacity 0.3s ease-in-out;
 
     @media (max-width: 768px) {
       font-size: 72px;

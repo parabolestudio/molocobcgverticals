@@ -1,4 +1,6 @@
 import { html, arc, scaleLinear } from "./lib.js";
+import { useInView } from "./useInView.js";
+import { getVariableClass } from "./helpers.js";
 
 const groupings = {
   "Acquisition strength": [
@@ -154,7 +156,78 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
     },
   };
 
-  return html`<div class="customer-relationships-container">
+  const onVisible = () => {
+    const container = document.querySelector(`#${id}`);
+    if (!container) return;
+
+    const dataArcEl = container.querySelector(".data-arc");
+    const dataCircleEl = container.querySelector(
+      `.${getVariableClass(variable)} .data-circle`,
+    );
+    const banEl = container.querySelector(".ban");
+
+    // Arc generator for animation
+    const dataArcGen = arc()
+      .innerRadius(innerHeight - arcWidth / 2)
+      .outerRadius(innerHeight - arcWidth / 2)
+      .startAngle(0);
+
+    // Phase 1: Animate the data arc endAngle from 0 to the actual value
+    const duration = 800;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    setTimeout(() => {
+      const startTime = performance.now();
+
+      const animateArc = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const rawProgress = Math.min(elapsed / duration, 1);
+        const progress = easeOutCubic(rawProgress);
+
+        const currentAngle = dataAngle * progress;
+        if (dataArcEl) {
+          dataArcEl.setAttribute("d", dataArcGen.endAngle(currentAngle)());
+        }
+
+        if (rawProgress < 1) {
+          requestAnimationFrame(animateArc);
+        } else {
+          // Phase 2: Animate in the data circle with a slight delay
+          setTimeout(() => {
+            if (dataCircleEl) {
+              const bbox = dataCircleEl.getBBox();
+              const cx = bbox.x + bbox.width / 2;
+              const cy = bbox.y + bbox.height / 2;
+              dataCircleEl.style.transformOrigin = `${cx}px ${cy}px`;
+              dataCircleEl.classList.add("vis-highlight-circles");
+            }
+
+            // Phase 3: Animate in the ban with a slight delay after that
+            setTimeout(() => {
+              if (banEl) {
+                const bbox = banEl.getBBox();
+                const cx = bbox.x + bbox.width / 2;
+                const cy = bbox.y + bbox.height / 2;
+                banEl.style.transformOrigin = `${cx}px ${cy}px`;
+                banEl.classList.add("vis-highlight-quadrant");
+              }
+            }, 300);
+          }, 0);
+        }
+      };
+
+      requestAnimationFrame(animateArc);
+    }, 200);
+  };
+
+  const containerRef = useInView({
+    onVisible: () => onVisible(),
+  });
+
+  return html`<div
+    class="customer-relationships-container ${getVariableClass(variable)}"
+    ref=${containerRef}
+  >
     <svg width="${width}" height="${height}">
       <defs>
         <linearGradient
@@ -214,7 +287,7 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
             x="${innerWidth / 2}"
             y="${innerHeight - 5}"
             text-anchor="middle"
-            class="ban"
+            class="ban vis-hidden"
           >
             ${data}
           </text>
@@ -259,20 +332,23 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
             </text>
           </g>
         </g>
-        <g class="data-elements">
+        <g
+          class="data-elements"
+          transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
+        >
           <path
-            d="${dataElement.arc()}"
+            d="M0,0"
             fill="#04033A"
-            transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
             stroke="#04033A"
             stroke-width="3"
+            class="data-arc"
           />
           <circle
             cx="${dataElement.circlePosition.x}"
             cy="${dataElement.circlePosition.y}"
             r="6"
             fill="#04033A"
-            transform="${`translate(${innerWidth / 2}, ${innerHeight})  rotate(-90)`}"
+            class="data-circle vis-hidden"
           />
         </g>
       </g>

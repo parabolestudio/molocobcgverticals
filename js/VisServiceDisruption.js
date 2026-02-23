@@ -1,15 +1,12 @@
 import { html, scaleThreshold, scalePoint } from "./lib.js";
 import { useInView } from "./useInView.js";
+import { getVariableClass } from "./helpers.js";
 
 // TODO: replace with actual average values
 const averageValues = {
   Disintermediation: 7,
   "Data standardization": 6,
   "Regulatory shield": 4,
-};
-
-const getVariableClass = (variable) => {
-  return variable.toLowerCase().replace(/\s/g, "-");
 };
 
 export function VisServiceDisruption({ variable, data, isMobile }) {
