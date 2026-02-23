@@ -66,18 +66,28 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
   const avgValue = averageValues[variable];
 
   const onVisible = () => {
+    const number = document.querySelector(
+      `.service-disruption-number-${getVariableClass(variable)}`,
+    );
+    if (number) {
+      number.classList.remove("vis-hidden");
+    }
+
     Array.from({ length: 10 }, (_, i) => {
-      setTimeout(() => {
-        const selector = `.circle-${getVariableClass(variable)}-${i + 1}`;
-        const element = document.querySelector(selector);
-        if (element) {
-          const bbox = element.getBBox();
-          const cx = bbox.x + bbox.width / 2;
-          const cy = bbox.y + bbox.height / 2;
-          element.style.transformOrigin = `${cx}px ${cy}px`;
-          element.classList.add("vis-highlight-circles");
-        }
-      }, i * 80);
+      setTimeout(
+        () => {
+          const selector = `.circle-${getVariableClass(variable)}-${i + 1}`;
+          const element = document.querySelector(selector);
+          if (element) {
+            const bbox = element.getBBox();
+            const cx = bbox.x + bbox.width / 2;
+            const cy = bbox.y + bbox.height / 2;
+            element.style.transformOrigin = `${cx}px ${cy}px`;
+            element.classList.add("vis-highlight-circles");
+          }
+        },
+        300 + i * 80,
+      );
     });
     setTimeout(() => {
       const averageElement = document.querySelector(
@@ -94,7 +104,12 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
   });
 
   return html`<div class="service-disruption-container" ref=${containerRef}>
-    <span class="service-disruption-number">${data}</span>
+    <span
+      class="service-disruption-number service-disruption-number-${getVariableClass(
+        variable,
+      )} vis-hidden"
+      >${data}</span
+    >
     <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
         ${isMobile
