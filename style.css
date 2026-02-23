@@ -1,8 +1,8 @@
 #vis-quadrant {
-  .hidden {
+  .vis-hidden {
     opacity: 0;
   }
-  .shown {
+  .vis-shown {
     opacity: 1;
   }
   .verticals .vertical,

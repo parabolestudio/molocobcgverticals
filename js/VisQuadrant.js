@@ -106,7 +106,7 @@ export function VisQuadrant({ vertical, isMobile }) {
           />
         </g>
         <g class="verticals">
-          <g class="vertical inactive Casino-Sportsbetting-(RMG)">
+          <g class="vertical inactive Casino-Sportsbetting">
             <g class="icon">
               <rect
                 width="22.942"
@@ -978,17 +978,55 @@ export function VisQuadrant({ vertical, isMobile }) {
     </g>
   </svg>`;
 
+  const appearanceOrder = [
+    { class: "Dating", type: "vertical" },
+    { class: "Gaming", type: "vertical" },
+    { class: "Gen-AI", type: "vertical" },
+    { class: "Casino-Sportsbetting", type: "vertical" },
+    { class: "Auto-Marketplaces", type: "vertical" },
+    { class: "Travel", type: "vertical" },
+    { class: "News", type: "vertical" },
+    { class: "Health-Fitness", type: "vertical" },
+    { class: "Education", type: "vertical" },
+    { class: "Retail-Ecommerce", type: "vertical" },
+    { class: "Productivity", type: "vertical" },
+    { class: "quadrant-highlight", type: null },
+    { class: "On-Demand-Services", type: "vertical" },
+    { class: "Financial-Services", type: "vertical" },
+    { class: "Media-Streaming", type: "vertical" },
+    { class: "Auto-OEMs", type: "vertical" },
+    { class: "Social", type: "vertical" },
+    { class: "FinTech", type: "vertical.active" },
+  ];
+
+  const onVisible = () => {
+    console.log("VisQuadrant is visible");
+
+    // loop over verticalsInOrder and remove hidden class from element with delay
+    appearanceOrder.forEach((el, index) => {
+      setTimeout(() => {
+        const selector = el.type ? `.${el.type}.${el.class}` : `.${el.class}`;
+        const element = document.querySelector(selector);
+        if (element) {
+          element.classList.remove("vis-hidden");
+        }
+      }, index * 150);
+    });
+  };
+
   const containerRef = useInView({
     eventName: "visQuadrantVisible",
-    onVisible: () => console.log("VisQuadrant is visible"),
+    onVisible: () => onVisible(),
   });
 
   // initially set verticals and quadrant-highlight to invisible, by adding class "hidden" to them
   useEffect(() => {
     const verticals = document.querySelectorAll(".vertical");
-    verticals.forEach((vertical) => vertical.classList.add("hidden"));
+    verticals.forEach((vertical) => vertical.classList.add("vis-hidden"));
     const quadrantHighlight = document.querySelectorAll(".quadrant-highlight");
-    quadrantHighlight.forEach((highlight) => highlight.classList.add("hidden"));
+    quadrantHighlight.forEach((highlight) =>
+      highlight.classList.add("vis-hidden"),
+    );
   }, []);
 
   return html`<div ref=${containerRef}>

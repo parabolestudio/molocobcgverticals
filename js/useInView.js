@@ -11,7 +11,7 @@ import { useEffect, useRef } from "./lib.js";
  *                                               dispatched (bubbles) on the element when visible.
  * @returns {import("preact/hooks").Ref} ref   - Attach this ref to the element you want to observe.
  */
-export function useInView({ threshold = 0.1, onVisible, eventName } = {}) {
+export function useInView({ threshold = 0.4, onVisible, eventName } = {}) {
   const ref = useRef(null);
 
   useEffect(() => {
