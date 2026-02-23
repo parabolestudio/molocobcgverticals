@@ -7,11 +7,9 @@ import { useEffect, useRef } from "./lib.js";
  * @param {object}   [options]
  * @param {number}   [options.threshold=0.1]  - Fraction of the element that must be visible (0–1).
  * @param {Function} [options.onVisible]       - Callback fired when the element enters the viewport.
- * @param {string}   [options.eventName]       - If provided, a CustomEvent with this name is
- *                                               dispatched (bubbles) on the element when visible.
  * @returns {import("preact/hooks").Ref} ref   - Attach this ref to the element you want to observe.
  */
-export function useInView({ threshold = 0.4, onVisible, eventName } = {}) {
+export function useInView({ threshold = 0.4, onVisible } = {}) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -22,9 +20,6 @@ export function useInView({ threshold = 0.4, onVisible, eventName } = {}) {
       ([entry]) => {
         if (entry.isIntersecting) {
           if (typeof onVisible === "function") onVisible();
-          if (eventName) {
-            node.dispatchEvent(new CustomEvent(eventName, { bubbles: true }));
-          }
           observer.disconnect();
         }
       },

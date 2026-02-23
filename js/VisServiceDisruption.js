@@ -1,10 +1,15 @@
 import { html, scaleThreshold, scalePoint } from "./lib.js";
+import { useInView } from "./useInView.js";
 
 // TODO: replace with actual average values
 const averageValues = {
   Disintermediation: 7,
   "Data standardization": 6,
   "Regulatory shield": 4,
+};
+
+const getVariableClass = (variable) => {
+  return variable.toLowerCase().replace(/\s/g, "-");
 };
 
 export function VisServiceDisruption({ variable, data, isMobile }) {
@@ -60,16 +65,45 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
 
   const avgValue = averageValues[variable];
 
-  return html`<div class="service-disruption-container">
+  const onVisible = () => {
+    Array.from({ length: 10 }, (_, i) => {
+      setTimeout(() => {
+        const selector = `.circle-${getVariableClass(variable)}-${i + 1}`;
+        const element = document.querySelector(selector);
+        if (element) {
+          const bbox = element.getBBox();
+          const cx = bbox.x + bbox.width / 2;
+          const cy = bbox.y + bbox.height / 2;
+          element.style.transformOrigin = `${cx}px ${cy}px`;
+          element.classList.add("vis-highlight");
+        }
+      }, i * 80);
+    });
+    setTimeout(() => {
+      const averageElement = document.querySelector(
+        `.average-elements-${getVariableClass(variable)}`,
+      );
+      if (averageElement) {
+        averageElement.classList.remove("vis-hidden");
+      }
+    }, 12 * 80);
+  };
+
+  const containerRef = useInView({
+    onVisible: () => onVisible(),
+  });
+
+  return html`<div class="service-disruption-container" ref=${containerRef}>
     <span class="service-disruption-number">${data}</span>
     <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
         ${isMobile
           ? null
           : html` <g
-              class="average-elements"
+              class="${`average-elements-${getVariableClass(variable)} vis-hidden`}"
               transform="translate(${scaleXDesktop(avgValue) +
               circleDiameter / 2}, 20)"
+              style="transition: opacity 0.3s ease-in-out;"
             >
               <text
                 class="avg-text"
@@ -100,12 +134,14 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
             : innerHeight / 2 + circleDiameter / 2 - 8;
 
           return html`<circle
+            class="circle-${getVariableClass(variable)}-${i + 1} vis-hidden"
             cx="${cx}"
             cy="${cy}"
             r="${circleDiameter / 2}"
             fill="${color}"
             stroke="${type === "active" ? "none" : "#00000075"}"
             stroke-dasharray="${type === "active" ? "none" : "4 2"}"
+            style="transition: opacity 0.3s ease-in-out;"
           />`;
         })}
       </g>

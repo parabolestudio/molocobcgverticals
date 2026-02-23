@@ -1,14 +1,9 @@
-#vis-quadrant {
-  .vis-hidden {
-    opacity: 0;
-  }
-  .verticals .vertical {
-    transition: opacity 0.3s ease-in-out;
-  }
-  .vis-highlight {
-    opacity: 1;
-    animation: pop 1s ease-in-out;
-  }
+.vis-hidden {
+  opacity: 0;
+}
+.vis-highlight {
+  opacity: 1;
+  animation: pop 1s ease-in-out;
 }
 
 @keyframes pop {
@@ -20,6 +15,12 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+#vis-quadrant {
+  .verticals .vertical {
+    transition: opacity 0.3s ease-in-out;
   }
 }
 
@@ -71,6 +72,7 @@
   }
 
   svg {
+    overflow: visible;
     margin-top: 3px;
     @media (max-width: 768px) {
       margin-top: 0;

@@ -12,7 +12,6 @@ customChartsConfig = window.customChartsConfig || {};
 
 // detect mobile for conditional rendering
 const mobile = window.innerWidth <= 768;
-console.log("Is mobile:", mobile, window.innerWidth);
 
 // re-render on window resize to handle mobile/desktop switch
 window.addEventListener("resize", () => {

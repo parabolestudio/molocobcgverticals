@@ -1174,7 +1174,6 @@ export function VisQuadrant({ vertical, isMobile }) {
   };
 
   const containerRef = useInView({
-    eventName: "visQuadrantVisible",
     onVisible: () => onVisible(),
   });
 
