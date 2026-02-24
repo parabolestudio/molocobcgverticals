@@ -37,21 +37,20 @@ const groupings = {
       max: 10,
     },
   ],
-  // TODO: check values for these groupings
   "Platform engagement depth": [
     {
       type: "low",
       min: 0,
-      max: 6.9,
+      max: 6.0,
     },
     {
       type: "medium",
-      min: 7,
-      max: 8.5,
+      min: 6.1,
+      max: 8.3,
     },
     {
       type: "high",
-      min: 8.6,
+      min: 8.4,
       max: 10,
     },
   ],
