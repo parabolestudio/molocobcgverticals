@@ -1,4 +1,4 @@
-import { html, csv, useEffect, useState, arc } from "./lib.js";
+import { html, csv, useEffect, useState, arc, scaleLinear } from "./lib.js";
 import { REPO_URL } from "./helpers.js";
 
 export function VisBrandDiscovery({ vertical, isMobile }) {
@@ -130,6 +130,14 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     ? `translate(${0}, ${heightSemicircle}) rotate(0)`
     : `translate(${widthLeft / 2 + widthCurve / 2}, ${heightSemicircle + heightAnnotationsTop}) rotate(-90)`;
 
+  // compute gradient for low and high arc segment, transitioning from teal (#60E2B7) to light gray (#F2F2F2)
+  const angleScale = scaleLinear().domain([0, 1]).range([0, Math.PI]);
+  const lowEndAngle = angleScale((totalLow + totalLow * 0.5) / 1);
+  const highStartAngle = angleScale(
+    (totalLow + totalMedium - (totalLow + totalMedium) * 0.075) / 1,
+  );
+  const gradientRadius = innerRadius + widthCurve * 0.25;
+
   function computeDividerLines() {
     // Compute all channel-boundary angles across the three arc segments
     const dividerAngles = [];
@@ -199,6 +207,33 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       height="${isMobile ? svgWidth : svgHeight}"
       style="overflow: visible;"
     >
+      <defs>
+        <linearGradient
+          id="lowGradient"
+          gradientUnits="userSpaceOnUse"
+          x1="0"
+          y1="${-gradientRadius}"
+          x2="${gradientRadius * Math.sin(lowEndAngle)}"
+          y2="${-gradientRadius * Math.cos(lowEndAngle)}"
+        >
+          <stop offset="0%" stop-color="#1AA476" />
+          <stop offset="20%" stop-color="#60E2B7" />
+          <stop offset="100%" stop-color="#F2F2F2" />
+        </linearGradient>
+        <linearGradient
+          id="highGradient"
+          gradientUnits="userSpaceOnUse"
+          x1="${gradientRadius * Math.sin(highStartAngle)}"
+          y1="${-gradientRadius * Math.cos(highStartAngle)}"
+          x2="0"
+          y2="${gradientRadius}"
+        >
+          <stop stop-color="#F2F2F2" />
+          <stop offset="0.5" stop-color="#B7A6FF" />
+          <stop offset="1" stop-color="#5E3FE0" />
+        </linearGradient>
+      </defs>
+
       <path d="${arcGenPartLow()}" fill="#60E2B7" transform="${arcTransform}" />
       <path
         d="${arcGenPartMedium()}"
