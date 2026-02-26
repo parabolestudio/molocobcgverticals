@@ -44,7 +44,7 @@ csv(`${REPO_URL}/data/data_service_disruption.csv`).then((rawData) => {
       (d) => d.Vertical === customChartsConfig.vertical,
     );
     if (filteredData.length > 0) {
-      console.log("SERVICE DISRUPTION - Loaded data:", filteredData[0]);
+      // console.log("SERVICE DISRUPTION - Loaded data:", filteredData[0]);
       const verticalData = filteredData[0];
 
       // render each variable's vis
@@ -98,7 +98,7 @@ csv(`${REPO_URL}/data/data_customer_relationships.csv`).then((rawData) => {
       (d) => d.Vertical === customChartsConfig.vertical,
     );
     if (filteredData.length > 0) {
-      console.log("CUSTOMER RELATIONSHIPS - Loaded data:", filteredData[0]);
+      // console.log("CUSTOMER RELATIONSHIPS - Loaded data:", filteredData[0]);
       const verticalData = filteredData[0];
 
       renderVis({

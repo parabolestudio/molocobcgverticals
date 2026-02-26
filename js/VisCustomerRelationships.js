@@ -64,13 +64,6 @@ const averageValues = {
 };
 
 export function VisCustomerRelationships({ id, variable, data, isMobile }) {
-  console.log(
-    "CUSTOMER RELATIONSHIPS - Loaded data:",
-    variable,
-    data,
-    isMobile,
-  );
-
   if (!data) return html`<div>Loading data...</div>`;
 
   // vis dimensions

@@ -10,7 +10,7 @@ const averageValues = {
 };
 
 export function VisServiceDisruption({ variable, data, isMobile }) {
-  console.log("SERVICE DISRUPTION - Loaded data:", variable, data, isMobile);
+  // console.log("SERVICE DISRUPTION - Loaded data:", variable, data, isMobile);
 
   if (!data) return html`<div>Loading data...</div>`;
 
@@ -35,11 +35,6 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
   const disruptionScale = scaleThreshold()
     .domain([2.001, 4.001, 6.001, 8.001, 10.001])
     .range(["Very Low", "Low", "Moderate", "High", "Very High"]);
-
-  console.log(
-    "SERVICE DISRUPTION - Disruption scale value:",
-    disruptionScale(8),
-  );
 
   const colorMapping = {
     "Very Low": "#1AA476",

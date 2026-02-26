@@ -1107,8 +1107,6 @@ export function VisQuadrant({ vertical, isMobile }) {
   });
 
   const onVisible = () => {
-    console.log("VisQuadrant is visible", vertical);
-
     // Animate gradient offset sweep: blue comes from bottom-left to top-right
     setTimeout(() => {
       const duration = 2000;

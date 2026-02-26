@@ -1,8 +1,14 @@
 import { html, csv, useEffect, useState, arc, scaleLinear } from "./lib.js";
+import { useInView } from "./useInView.js";
 import { REPO_URL } from "./helpers.js";
 
 export function VisBrandDiscovery({ vertical, isMobile }) {
   const [data, setData] = useState(null);
+  const [animProgress, setAnimProgress] = useState({
+    low: 0,
+    medium: 0,
+    high: 0,
+  });
 
   useEffect(() => {
     csv(`${REPO_URL}/data/data_brand_discovery.csv`).then((rawData) => {
@@ -10,7 +16,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
         const filteredData = rawData.filter((d) => d.Vertical === vertical);
         if (filteredData.length > 0) {
           const verticalData = filteredData[0];
-          console.log("BRAND DISCOVERY - Loaded data:", verticalData, isMobile);
+          // console.log("BRAND DISCOVERY - Loaded data:", verticalData, isMobile);
 
           const data = {
             affiliates: {
@@ -102,22 +108,28 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const totalHigh = dataHigh.reduce((sum, d) => sum + d.value, 0);
   const total = totalLow + totalMedium + totalHigh;
 
+  // Final (fully-animated) end angles
+  const lowFinalEnd = Math.PI * (totalLow / total);
+  const medFinalEnd = Math.PI * ((totalLow + totalMedium) / total);
+
+  // Arc generators with animated end angles
   const arcGenPartLow = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
     .startAngle(0)
-    .endAngle(Math.PI * (totalLow / total));
+    .endAngle(lowFinalEnd * animProgress.low);
 
   const arcGenPartMedium = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
-    .startAngle(Math.PI * (totalLow / total))
-    .endAngle(Math.PI * ((totalLow + totalMedium) / total));
+    .startAngle(lowFinalEnd)
+    .endAngle(lowFinalEnd + (medFinalEnd - lowFinalEnd) * animProgress.medium);
+
   const arcGenPartHigh = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
-    .startAngle(Math.PI * ((totalLow + totalMedium) / total))
-    .endAngle(Math.PI);
+    .startAngle(medFinalEnd)
+    .endAngle(medFinalEnd + (Math.PI - medFinalEnd) * animProgress.high);
 
   const innerRadius = heightSemicircle - widthCurve;
   const outerRadius = heightSemicircle;
@@ -244,10 +256,6 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     // - tlX, tlY: coordinates of the end of the horizontal/vertical line where the text will be
     // - textX, textLine1Y, textLine2Y: coordinates for placing the two lines of text
     // - textAnchor: "start" or "end" depending on text alignment
-    console.log(
-      "BRAND DISCOVERY - Computing annotation positions for:",
-      annotationData,
-    );
 
     // Compute annotation positions in final SVG coordinates
     let annOffset = 15; // gap from outer arc to bottom-left of text
@@ -350,7 +358,44 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
   const testing = false;
 
-  return html`<div>
+  const animComplete =
+    animProgress.low >= 1 && animProgress.medium >= 1 && animProgress.high >= 1;
+
+  const onVisible = () => {
+    const duration = 600; // ms per segment
+    const delay = 0; // pause between segments
+
+    const animateSegment = (segment) => {
+      return new Promise((resolve) => {
+        const start = performance.now();
+        const tick = (now) => {
+          const t = Math.min((now - start) / duration, 1);
+          // easeInOutCubic
+          const eased =
+            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          setAnimProgress((prev) => ({ ...prev, [segment]: eased }));
+          if (t < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            resolve();
+          }
+        };
+        requestAnimationFrame(tick);
+      });
+    };
+
+    animateSegment("low")
+      .then(() => new Promise((r) => setTimeout(r, delay)))
+      .then(() => animateSegment("medium"))
+      .then(() => new Promise((r) => setTimeout(r, delay)))
+      .then(() => animateSegment("high"));
+  };
+
+  const containerRef = useInView({
+    onVisible: () => onVisible(),
+  });
+
+  return html`<div class="brand-discovery-container" ref=${containerRef}>
     ${testing &&
     html` <div>
       <p style="color:white;text-decoration: underline;">
@@ -359,27 +404,18 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       <p style="color:#60E2B7;">
         LOW:${" "}
         ${dataLow.map((d) => {
-          console.log("BRAND DISCOVERY - Rendering low disruption channel:", d);
           return html`${d.label}: ${d.value} |`;
         })}
       </p>
       <p style="color:white;">
         MEDIUM:${" "}
         ${dataMedium.map((d) => {
-          console.log(
-            "BRAND DISCOVERY - Rendering medium disruption channel:",
-            d,
-          );
           return html`${d.label}: ${d.value} |`;
         })}
       </p>
       <p style="color:#B7A6FF;">
         HIGH:${" "}
         ${dataHigh.map((d) => {
-          console.log(
-            "BRAND DISCOVERY - Rendering high disruption channel:",
-            d,
-          );
           return html`${d.label}: ${d.value} |`;
         })}
       </p>
@@ -444,7 +480,10 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
         fill="url(#highGradient)"
         transform="${arcTransform}"
       />
-      <g class="divider-lines">
+      <g
+        class="divider-lines"
+        style="opacity: ${animComplete ? 1 : 0}; transition: opacity 0.4s;"
+      >
         ${dividerLines.map(
           ({ x1, y1, x2, y2 }) =>
             html`<line
@@ -458,7 +497,10 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             />`,
         )}
       </g>
-      <g class="annotations">
+      <g
+        class="annotations"
+        style="opacity: ${animComplete ? 1 : 0}; transition: opacity 0.4s;"
+      >
         ${annotationPositions.map(
           (ann) =>
             html`<polyline
