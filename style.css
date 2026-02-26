@@ -59,6 +59,26 @@
     line-height: 119.965%; /* 16.795px */
     margin: 0;
   }
+
+  .annotations {
+    .annotation-label {
+      fill: var(--White, #fff);
+
+      /* Chart text & annotations */
+      font-family: Montserrat;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 119.965%; /* 16.795px */
+    }
+    .annotation-value {
+      font-family: MuseoModerno;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 119.965%; /* 28.792px */
+    }
+  }
 }
 
 .service-disruption-container {

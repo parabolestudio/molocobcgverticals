@@ -188,6 +188,112 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   }
   const dividerLines = computeDividerLines();
 
+  function computeAnnotations() {
+    const annotations = [];
+    const colorMap = { low: "#60E2B7", medium: "#F2F2F2", high: "#B7A6FF" };
+
+    const lowStart = 0;
+    const lowEnd = Math.PI * (totalLow / total);
+    let cumLow = 0;
+    for (const d of dataLow) {
+      const startA = lowStart + (lowEnd - lowStart) * (cumLow / totalLow);
+      const endA =
+        lowStart + (lowEnd - lowStart) * ((cumLow + d.value) / totalLow);
+      if (d.value > 0.04) {
+        annotations.push({
+          ...d,
+          midAngle: (startA + endA) / 2,
+          color: colorMap[d.type],
+        });
+      }
+      cumLow += d.value;
+    }
+
+    const medStart = lowEnd;
+    const medEnd = Math.PI * ((totalLow + totalMedium) / total);
+    let cumMed = 0;
+    for (const d of dataMedium) {
+      const startA = medStart + (medEnd - medStart) * (cumMed / totalMedium);
+      const endA =
+        medStart + (medEnd - medStart) * ((cumMed + d.value) / totalMedium);
+      if (d.value > 0.04) {
+        annotations.push({
+          ...d,
+          midAngle: (startA + endA) / 2,
+          color: colorMap[d.type],
+        });
+      }
+      cumMed += d.value;
+    }
+
+    const highStart = medEnd;
+    const highEnd = Math.PI;
+    let cumHigh = 0;
+    for (const d of dataHigh) {
+      const startA = highStart + (highEnd - highStart) * (cumHigh / totalHigh);
+      const endA =
+        highStart + (highEnd - highStart) * ((cumHigh + d.value) / totalHigh);
+      if (d.value > 0.04) {
+        annotations.push({
+          ...d,
+          midAngle: (startA + endA) / 2,
+          color: colorMap[d.type],
+        });
+      }
+      cumHigh += d.value;
+    }
+
+    return annotations;
+  }
+  const annotationData = computeAnnotations();
+
+  // Compute annotation positions in final SVG coordinates
+  const annOffset = 35; // gap from outer arc to bottom-left of text
+  const annLineHeight = 22;
+  const annTextBlockHeight = annLineHeight * 2 + 0; // 2 lines + padding
+  const annTextPad = 5; // horizontal gap between vertical line and text
+
+  const arcCX = isMobile ? 0 : widthLeft / 2 + widthCurve / 2;
+  const arcCY = isMobile
+    ? heightSemicircle
+    : heightSemicircle + heightAnnotationsTop;
+
+  const annotationPositions = annotationData.map((ann) => {
+    let arcX, arcY, blX, blY;
+    if (isMobile) {
+      // No rotation: SVG coords from D3-arc + translate(0, heightSemicircle)
+      arcX = outerRadius * Math.sin(ann.midAngle);
+      arcY = arcCY - outerRadius * Math.cos(ann.midAngle);
+      const ext = outerRadius + annOffset;
+      blX = ext * Math.sin(ann.midAngle);
+      blY = arcCY - ext * Math.cos(ann.midAngle);
+    } else {
+      // -90° rotation: svgX = cx - r·cos(a), svgY = cy - r·sin(a)
+      arcX = arcCX - outerRadius * 0.95 * Math.cos(ann.midAngle);
+      arcY = arcCY - outerRadius * 0.95 * Math.sin(ann.midAngle);
+      const ext = outerRadius + annOffset;
+      blX = arcCX - ext * Math.cos(ann.midAngle);
+      blY = arcCY - ext * Math.sin(ann.midAngle);
+    }
+    const tlX = blX;
+    const tlY = blY - annTextBlockHeight;
+    const textX = blX + annTextPad;
+    const textLine1Y = blY - annLineHeight - 6;
+    const textLine2Y = blY;
+    return {
+      ...ann,
+      arcX,
+      arcY,
+      blX,
+      blY,
+      tlX,
+      tlY,
+      textX,
+      textLine1Y,
+      textLine2Y,
+    };
+  });
+
   const testing = false;
 
   return html`<div>
@@ -292,6 +398,33 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
               stroke-width="1"
               transform="${arcTransform}"
             />`,
+        )}
+      </g>
+      <g class="annotations">
+        ${annotationPositions.map(
+          (ann) =>
+            html`<polyline
+                points="${ann.tlX},${ann.tlY} ${ann.blX},${ann.blY} ${ann.arcX},${ann.arcY}"
+                fill="none"
+                stroke="white"
+                stroke-width="1"
+                class="annotation-line"
+              />
+              <text
+                x="${ann.textX}"
+                y="${ann.textLine1Y}"
+                class="annotation-label"
+              >
+                ${ann.label}
+              </text>
+              <text
+                x="${ann.textX}"
+                y="${ann.textLine2Y}"
+                fill="${ann.color}"
+                class="annotation-value"
+              >
+                ${Math.round(ann.value * 100)}%
+              </text>`,
         )}
       </g>
     </svg>
