@@ -188,7 +188,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   }
   const dividerLines = computeDividerLines();
 
-  const testing = false;
+  const testing = true;
 
   return html`<div>
     ${testing &&

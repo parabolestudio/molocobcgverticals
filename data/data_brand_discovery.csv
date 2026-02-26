@@ -1,19 +1,18 @@
-Vertical,Acquisition strength,Sustained loyalty,Platform engagement depth
-Gaming,5.7,5.9,9.9
-Retail & Ecommerce,7.9,7.1,6.3
-Media & Streaming,8.6,8.1,8.3
-Education,7.4,6.4,6.7
-Health & Fitness,5.6,5.4,8.6
-News,6,7.7,2.3
-FinTech,9.2,8.3,8.1
-Traditional Finance,9.9,10,4.8
-On-Demand,8,6.7,8.4
-Travel,6.3,4.4,5.7
-Dating,8.5,5.4,9
-Social,10,9.5,9.4
-Productivity,9.7,7.7,6.6
-Gen AI,6.7,6.3,6.6
-RMG,7,5,5.9
-Utilities,3.8,6.1,9.4
-Digital Auto OEMs,9.4,8.7,4.2
-Digital Auto marketplaces,7.2,5.9,2.5
+Vertical,Organic Direct,"Organic (SEO, Social)",Paid Search,Display,Social Media,Affiliates,"Video (YT, OTT)",E-commerce & Retail Media,E-Mail & CRM,In-App Marketing
+Gaming,0.40,0.04,0.16,0.00,0.22,0.03,0.02,0.00,0.00,0.13
+Retail & Ecommerce,0.48,0.12,0.05,0.06,0.25,0.00,0.03,0.00,0.00,0.00
+Media & Streaming,0.59,0.07,0.11,0.02,0.15,0.03,0.03,0.00,0.00,0.00
+Education,0.47,0.09,0.10,0.10,0.12,0.05,0.03,0.00,0.00,0.03
+Health & Fitness,0.32,0.10,0.22,0.04,0.20,0.04,0.03,0.01,0.01,0.02
+News,0.35,0.11,0.20,,0.26,0.08,,,,0.00
+FinTech,0.61,0.09,0.07,0.08,0.03,0.00,0.11,0.00,0.00,0.00
+Financial Services,0.66,0.10,0.04,0.14,0.02,0.00,0.04,0.00,0.00,0.00
+On-Demand,0.44,0.17,0.11,0.00,0.20,0.02,0.02,0.01,0.02,0.01
+Travel,0.40,0.08,0.11,0.04,0.13,0.03,0.08,0.04,0.04,0.04
+Dating,0.56,0.09,0.10,0.01,0.13,0.01,0.04,0.02,0.01,0.03
+Social,0.58,0.19,0.03,0.00,0.12,0.06,0.02,0.00,0.00,0.00
+Productivity,0.68,0.06,0.04,0.03,0.05,0.03,0.04,0.02,0.02,0.03
+Gen AI,0.46,0.05,0.09,0.00,0.06,0.27,0.06,0.00,0.00,0.00
+RMG,0.49,0.05,0.09,0.04,0.04,0.15,0.04,0.02,0.04,0.04
+Auto OEMs,0.67,0.05,0.20,,,0.08,,,,0.00
+Auto marketplaces,0.52,0.03,0.16,,0.10,0.15,0.02,,,0.02
