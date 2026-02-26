@@ -188,12 +188,9 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   return html`<div>
     ${isMobile
       ? html`<div
-          style="display: flex; justify-content: center; align-items: flex-start; gap: 16px; margin-bottom: 16px;"
+          style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-bottom: 16px;"
         >
-          <p
-            class="ban"
-            style="color: #60E2B7; flex-basis: 156px;flex-shrink: 0;"
-          >
+          <p class="ban" style="color: #60E2B7; flex-shrink: 0;">
             ${(totalLow * 100).toFixed(0)}%
           </p>
           <p class="ban-label" style="max-width: 220px;">
@@ -287,12 +284,9 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       : null}
     ${isMobile
       ? html`<div
-          style="display: flex; justify-content: center; align-items: flex-start; gap: 16px; margin-bottom: 16px;"
+          style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start;"
         >
-          <p
-            class="ban"
-            style="color: #B7A6FF; flex-basis: 156px;flex-shrink: 0;"
-          >
+          <p class="ban" style="color: #B7A6FF; flex-shrink: 0;">
             ${(totalHigh * 100).toFixed(0)}%
           </p>
           <p class="ban-label" style="max-width: 220px;">
