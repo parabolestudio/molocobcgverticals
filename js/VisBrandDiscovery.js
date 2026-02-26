@@ -248,7 +248,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const annotationData = computeAnnotations();
 
   // Compute annotation positions in final SVG coordinates
-  const annOffset = 35; // gap from outer arc to bottom-left of text
+  const annOffset = 15; // gap from outer arc to bottom-left of text
   const annLineHeight = 22;
   const annTextBlockHeight = annLineHeight * 2 + 0; // 2 lines + padding
   const annTextPad = 5; // horizontal gap between vertical line and text
@@ -269,15 +269,19 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       blY = arcCY - ext * Math.cos(ann.midAngle);
     } else {
       // -90° rotation: svgX = cx - r·cos(a), svgY = cy - r·sin(a)
-      arcX = arcCX - outerRadius * 0.95 * Math.cos(ann.midAngle);
-      arcY = arcCY - outerRadius * 0.95 * Math.sin(ann.midAngle);
+      arcX = arcCX - outerRadius * 0.9 * Math.cos(ann.midAngle);
+      arcY = arcCY - outerRadius * 0.9 * Math.sin(ann.midAngle);
       const ext = outerRadius + annOffset;
       blX = arcCX - ext * Math.cos(ann.midAngle);
       blY = arcCY - ext * Math.sin(ann.midAngle);
     }
+    const isLow = ann.type === "low";
     const tlX = blX;
     const tlY = blY - annTextBlockHeight;
-    const textX = blX + annTextPad;
+    // For low: text sits left of the line (text-anchor end), line on right
+    // For medium/high: text sits right of the line (text-anchor start), line on left
+    const textX = isLow && !isMobile ? blX - annTextPad : blX + annTextPad;
+    const textAnchor = isLow && !isMobile ? "end" : "start";
     const textLine1Y = blY - annLineHeight - 6;
     const textLine2Y = blY;
     return {
@@ -291,6 +295,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       textX,
       textLine1Y,
       textLine2Y,
+      textAnchor,
     };
   });
 
@@ -413,6 +418,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
               <text
                 x="${ann.textX}"
                 y="${ann.textLine1Y}"
+                text-anchor="${ann.textAnchor}"
                 class="annotation-label"
               >
                 ${ann.label}
@@ -420,6 +426,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
               <text
                 x="${ann.textX}"
                 y="${ann.textLine2Y}"
+                text-anchor="${ann.textAnchor}"
                 fill="${ann.color}"
                 class="annotation-value"
               >
