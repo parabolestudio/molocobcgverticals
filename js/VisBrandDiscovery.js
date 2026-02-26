@@ -82,12 +82,10 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const widthLeft = isMobile ? 365 : 492;
   const heightSemicircle = isMobile ? 213 : 288;
   const heightAnnotationsTop = isMobile ? 100 : 63;
-  const widthAnnotationsRight = isMobile ? 50 : 207;
+  const widthAnnotationsRight = isMobile ? 120 : 207;
   const widthCurve = isMobile ? 65 : 86;
   const svgWidth = widthLeft + widthCurve + widthAnnotationsRight;
   const svgHeight = heightSemicircle + heightAnnotationsTop;
-
-  console.log("BRAND DISCOVERY - Formatted data:", data);
 
   const dataLow = Object.values(data)
     .filter((d) => d.type === "low")
@@ -98,19 +96,11 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const dataHigh = Object.values(data)
     .filter((d) => d.type === "high")
     .sort((a, b) => b.value - a.value);
-  // const groupedData = { low: dataLow, medium: dataMedium, high: dataHigh };
-  console.log("BRAND DISCOVERY - Low disruption channels:", dataLow);
-  console.log("BRAND DISCOVERY - Medium disruption channels:", dataMedium);
-  console.log("BRAND DISCOVERY - High disruption channels:", dataHigh);
 
   const totalLow = dataLow.reduce((sum, d) => sum + d.value, 0);
   const totalMedium = dataMedium.reduce((sum, d) => sum + d.value, 0);
   const totalHigh = dataHigh.reduce((sum, d) => sum + d.value, 0);
   const total = totalLow + totalMedium + totalHigh;
-  console.log("BRAND DISCOVERY - Total low disruption:", totalLow);
-  console.log("BRAND DISCOVERY - Total medium disruption:", totalMedium);
-  console.log("BRAND DISCOVERY - Total high disruption:", totalHigh);
-  console.log("BRAND DISCOVERY - Total traffic:", total);
 
   const arcGenPartLow = arc()
     .innerRadius(heightSemicircle - widthCurve)
@@ -247,57 +237,116 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   }
   const annotationData = computeAnnotations();
 
-  // Compute annotation positions in final SVG coordinates
-  const annOffset = 15; // gap from outer arc to bottom-left of text
-  const annLineHeight = 22;
-  const annTextBlockHeight = annLineHeight * 2 + 0; // 2 lines + padding
-  const annTextPad = 5; // horizontal gap between vertical line and text
+  function computeAnnotationPositions() {
+    // For each annotation, we want to compute:
+    // - arcX, arcY: coordinates of the point on the arc where the line will connect
+    // - blX, blY: coordinates of the "bend" point where the line changes from diagonal to horizontal/vertical
+    // - tlX, tlY: coordinates of the end of the horizontal/vertical line where the text will be
+    // - textX, textLine1Y, textLine2Y: coordinates for placing the two lines of text
+    // - textAnchor: "start" or "end" depending on text alignment
+    console.log(
+      "BRAND DISCOVERY - Computing annotation positions for:",
+      annotationData,
+    );
 
-  const arcCX = isMobile ? 0 : widthLeft / 2 + widthCurve / 2;
-  const arcCY = isMobile
-    ? heightSemicircle
-    : heightSemicircle + heightAnnotationsTop;
+    // Compute annotation positions in final SVG coordinates
+    let annOffset = 15; // gap from outer arc to bottom-left of text
 
-  const annotationPositions = annotationData.map((ann) => {
-    let arcX, arcY, blX, blY;
-    if (isMobile) {
-      // No rotation: SVG coords from D3-arc + translate(0, heightSemicircle)
-      arcX = outerRadius * Math.sin(ann.midAngle);
-      arcY = arcCY - outerRadius * Math.cos(ann.midAngle);
-      const ext = outerRadius + annOffset;
-      blX = ext * Math.sin(ann.midAngle);
-      blY = arcCY - ext * Math.cos(ann.midAngle);
-    } else {
-      // -90° rotation: svgX = cx - r·cos(a), svgY = cy - r·sin(a)
-      arcX = arcCX - outerRadius * 0.9 * Math.cos(ann.midAngle);
-      arcY = arcCY - outerRadius * 0.9 * Math.sin(ann.midAngle);
-      const ext = outerRadius + annOffset;
-      blX = arcCX - ext * Math.cos(ann.midAngle);
-      blY = arcCY - ext * Math.sin(ann.midAngle);
-    }
-    const isLow = ann.type === "low";
-    const tlX = blX;
-    const tlY = blY - annTextBlockHeight;
-    // For low: text sits left of the line (text-anchor end), line on right
-    // For medium/high: text sits right of the line (text-anchor start), line on left
-    const textX = isLow && !isMobile ? blX - annTextPad : blX + annTextPad;
-    const textAnchor = isLow && !isMobile ? "end" : "start";
-    const textLine1Y = blY - annLineHeight - 6;
-    const textLine2Y = blY;
-    return {
-      ...ann,
-      arcX,
-      arcY,
-      blX,
-      blY,
-      tlX,
-      tlY,
-      textX,
-      textLine1Y,
-      textLine2Y,
-      textAnchor,
-    };
-  });
+    const annLineHeight = 22;
+    const annTextBlockHeight = annLineHeight * 2 + (isMobile ? -10 : 0); // 2 lines + padding
+    const annTextPad = 5; // horizontal gap between vertical line and text
+
+    const arcCX = isMobile ? 0 : widthLeft / 2 + widthCurve / 2;
+    const arcCY = isMobile
+      ? heightSemicircle
+      : heightSemicircle + heightAnnotationsTop;
+
+    return annotationData.map((ann) => {
+      let arcX, arcY, blX, blY;
+      const isLow = ann.type === "low";
+
+      // manually adjust annotation offsets for mobile to avoid overlaps
+      if (
+        isMobile &&
+        (vertical === "FinTech" || vertical === "Retail & Ecommerce") &&
+        ann.label === "Display"
+      ) {
+        annOffset = 45; // increase offset for Display label on mobile FinTech to avoid overlap with Organic SEO label
+      }
+      if (
+        isMobile &&
+        (vertical === "FinTech" || vertical === "Retail & Ecommerce") &&
+        ann.label === "Paid Search"
+      ) {
+        annOffset = 85; // increase offset for Paid Search label on mobile FinTech to avoid overlap with Organic SEO label
+      }
+
+      if (isMobile) {
+        // No rotation: SVG coords from D3-arc + translate(0, heightSemicircle)
+        arcX = outerRadius * 0.9 * Math.sin(ann.midAngle);
+        arcY = arcCY - outerRadius * 0.9 * Math.cos(ann.midAngle);
+        const ext = outerRadius + annOffset;
+        blX = ext * Math.sin(ann.midAngle);
+        blY = arcCY - ext * Math.cos(ann.midAngle);
+      } else {
+        // -90° rotation: svgX = cx - r·cos(a), svgY = cy - r·sin(a)
+        arcX = arcCX - outerRadius * 0.9 * Math.cos(ann.midAngle);
+        arcY = arcCY - outerRadius * 0.9 * Math.sin(ann.midAngle);
+        const ext = outerRadius + annOffset;
+        blX = arcCX - ext * Math.cos(ann.midAngle);
+        blY = arcCY - ext * Math.sin(ann.midAngle);
+      }
+
+      let tlX, tlY, textX, textLine1Y, textLine2Y, textAnchor;
+
+      if (isMobile) {
+        if (isLow) {
+          // Mobile low: line below text — horizontal line under text, then diagonal to arc
+          textLine1Y = blY - annTextBlockHeight + 6;
+          textLine2Y = blY - annTextBlockHeight + annLineHeight + 6;
+          textX = blX;
+          textAnchor = "start";
+          // tlX,tlY = right end of horizontal line (under text)
+          // blX,blY = left end of horizontal line (corner going to arc)
+          tlX = blX + 60; // extend horizontal line to the right under the text
+          tlY = blY; // same Y as blY — horizontal
+        } else {
+          // Mobile medium/high: line above text — horizontal line above text, then diagonal to arc
+          textLine1Y = blY + annLineHeight - 6;
+          textLine2Y = blY + annLineHeight * 2 - 6;
+          textX = blX;
+          textAnchor = "start";
+          // tlX,tlY = right end of horizontal line (above text)
+          // blX,blY = left end of horizontal line (corner going to arc)
+          tlX = blX + 60; // extend horizontal line to the right above the text
+          tlY = blY; // same Y as blY — horizontal
+        }
+      } else {
+        // Desktop: low has line on right (text left), others line on left (text right)
+        tlX = blX;
+        tlY = blY - annTextBlockHeight;
+        textX = isLow ? blX - annTextPad : blX + annTextPad;
+        textAnchor = isLow ? "end" : "start";
+        textLine1Y = blY - annLineHeight - 6;
+        textLine2Y = blY;
+      }
+
+      return {
+        ...ann,
+        arcX,
+        arcY,
+        blX,
+        blY,
+        tlX,
+        tlY,
+        textX,
+        textLine1Y,
+        textLine2Y,
+        textAnchor,
+      };
+    });
+  }
+  const annotationPositions = computeAnnotationPositions();
 
   const testing = false;
 
