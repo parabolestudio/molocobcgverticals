@@ -429,7 +429,11 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
         </linearGradient>
       </defs>
 
-      <path d="${arcGenPartLow()}" fill="#60E2B7" transform="${arcTransform}" />
+      <path
+        d="${arcGenPartLow()}"
+        fill="url(#lowGradient)"
+        transform="${arcTransform}"
+      />
       <path
         d="${arcGenPartMedium()}"
         fill="#F2F2F2"
@@ -437,7 +441,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       />
       <path
         d="${arcGenPartHigh()}"
-        fill="#B7A6FF"
+        fill="url(#highGradient)"
         transform="${arcTransform}"
       />
       <g class="divider-lines">
