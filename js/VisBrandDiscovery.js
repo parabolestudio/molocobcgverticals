@@ -362,33 +362,35 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     animProgress.low >= 1 && animProgress.medium >= 1 && animProgress.high >= 1;
 
   const onVisible = () => {
-    const duration = 600; // ms per segment
-    const delay = 0; // pause between segments
+    // Single continuous animation across all three arcs.
+    // Global t goes 0→1 over totalDuration. Each segment owns a
+    // proportional slice of t based on its angular share so the
+    // sweep speed looks constant.
+    const totalDuration = 1200; // ms for entire semicircle
 
-    const animateSegment = (segment) => {
-      return new Promise((resolve) => {
-        const start = performance.now();
-        const tick = (now) => {
-          const t = Math.min((now - start) / duration, 1);
-          // easeInOutCubic
-          const eased =
-            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-          setAnimProgress((prev) => ({ ...prev, [segment]: eased }));
-          if (t < 1) {
-            requestAnimationFrame(tick);
-          } else {
-            resolve();
-          }
-        };
+    const lowFrac = totalLow / total;
+    const medFrac = totalMedium / total;
+    const highFrac = totalHigh / total;
+
+    const startTime = performance.now();
+
+    const tick = (now) => {
+      const raw = Math.min((now - startTime) / totalDuration, 1);
+      // gentle ease-out so it doesn't stop abruptly
+      const t = 1 - Math.pow(1 - raw, 2);
+
+      // Map global t into per-segment progress (0→1 each)
+      const lowP = Math.min(t / lowFrac, 1);
+      const medP = lowFrac > 0 ? Math.max(0, Math.min((t - lowFrac) / medFrac, 1)) : 0;
+      const highP = (lowFrac + medFrac) > 0 ? Math.max(0, Math.min((t - lowFrac - medFrac) / highFrac, 1)) : 0;
+
+      setAnimProgress({ low: lowP, medium: medP, high: highP });
+
+      if (raw < 1) {
         requestAnimationFrame(tick);
-      });
+      }
     };
-
-    animateSegment("low")
-      .then(() => new Promise((r) => setTimeout(r, delay)))
-      .then(() => animateSegment("medium"))
-      .then(() => new Promise((r) => setTimeout(r, delay)))
-      .then(() => animateSegment("high"));
+    requestAnimationFrame(tick);
   };
 
   const containerRef = useInView({
