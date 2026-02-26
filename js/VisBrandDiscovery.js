@@ -16,7 +16,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             affiliates: {
               value: +verticalData["Affiliates"],
               label: "Affiliates",
-              type: "medium", // TODO: check
+              type: "high",
             },
             display: {
               value: +verticalData["Display"],
@@ -26,17 +26,17 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             emailCRM: {
               value: +verticalData["E-Mail & CRM"],
               label: "E-Mail & CRM",
-              type: "low", // TODO: check
+              type: "low",
             },
             ecommerceRetailMedia: {
               value: +verticalData["E-commerce & Retail Media"],
               label: "E-commerce & Retail Media",
-              type: "high", // TODO: check
+              type: "low",
             },
             inAppMarketing: {
               value: +verticalData["In-App Marketing"],
               label: "In-App Marketing",
-              type: "low", // TODO: check
+              type: "low",
             },
             organicSeoSocial: {
               value: +verticalData["Organic (SEO, Social)"],
@@ -56,7 +56,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             socialMedia: {
               value: +verticalData["Social Media"],
               label: "Social Media",
-              type: "low",
+              type: "medium",
             },
             video: {
               value: +verticalData["Video (YT, OTT)"],
@@ -89,9 +89,15 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
   console.log("BRAND DISCOVERY - Formatted data:", data);
 
-  const dataLow = Object.values(data).filter((d) => d.type === "low");
-  const dataMedium = Object.values(data).filter((d) => d.type === "medium");
-  const dataHigh = Object.values(data).filter((d) => d.type === "high");
+  const dataLow = Object.values(data)
+    .filter((d) => d.type === "low")
+    .sort((a, b) => b.value - a.value);
+  const dataMedium = Object.values(data)
+    .filter((d) => d.type === "medium")
+    .sort((a, b) => b.value - a.value);
+  const dataHigh = Object.values(data)
+    .filter((d) => d.type === "high")
+    .sort((a, b) => b.value - a.value);
   // const groupedData = { low: dataLow, medium: dataMedium, high: dataHigh };
   console.log("BRAND DISCOVERY - Low disruption channels:", dataLow);
   console.log("BRAND DISCOVERY - Medium disruption channels:", dataMedium);
@@ -100,28 +106,27 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const totalLow = dataLow.reduce((sum, d) => sum + d.value, 0);
   const totalMedium = dataMedium.reduce((sum, d) => sum + d.value, 0);
   const totalHigh = dataHigh.reduce((sum, d) => sum + d.value, 0);
+  const total = totalLow + totalMedium + totalHigh;
+  console.log("BRAND DISCOVERY - Total low disruption:", totalLow);
+  console.log("BRAND DISCOVERY - Total medium disruption:", totalMedium);
+  console.log("BRAND DISCOVERY - Total high disruption:", totalHigh);
+  console.log("BRAND DISCOVERY - Total traffic:", total);
 
   const arcGenPartLow = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
     .startAngle(0)
-    .endAngle(Math.PI * (totalLow / (totalLow + totalHigh)));
+    .endAngle(Math.PI * (totalLow / total));
 
   const arcGenPartMedium = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
-    .startAngle(Math.PI * (totalLow / (totalLow + totalHigh)))
-    .endAngle(
-      Math.PI *
-        ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh)),
-    );
+    .startAngle(Math.PI * (totalLow / total))
+    .endAngle(Math.PI * ((totalLow + totalMedium) / total));
   const arcGenPartHigh = arc()
     .innerRadius(heightSemicircle - widthCurve)
     .outerRadius(heightSemicircle)
-    .startAngle(
-      Math.PI *
-        ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh)),
-    )
+    .startAngle(Math.PI * ((totalLow + totalMedium) / total))
     .endAngle(Math.PI);
 
   const innerRadius = heightSemicircle - widthCurve;
@@ -132,9 +137,9 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
   // compute gradient for low and high arc segment, transitioning from teal (#60E2B7) to light gray (#F2F2F2)
   const angleScale = scaleLinear().domain([0, 1]).range([0, Math.PI]);
-  const lowEndAngle = angleScale((totalLow + totalLow * 0.5) / 1);
+  const lowEndAngle = angleScale((totalLow + totalLow * 0.5) / total);
   const highStartAngle = angleScale(
-    (totalLow + totalMedium - (totalLow + totalMedium) * 0.075) / 1,
+    (totalLow + totalMedium - (totalLow + totalMedium) * 0.075) / total,
   );
   const gradientRadius = innerRadius + widthCurve * 0.25;
 
@@ -144,7 +149,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
     // Use the exact same angle formulas as the arc generators
     const lowStart = 0;
-    const lowEnd = Math.PI * (totalLow / (totalLow + totalHigh));
+    const lowEnd = Math.PI * (totalLow / total);
     let cumLow = 0;
     for (let i = 0; i < dataLow.length - 1; i++) {
       cumLow += dataLow[i].value;
@@ -153,9 +158,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     dividerAngles.push(lowEnd); // boundary between low and medium
 
     const medStart = lowEnd;
-    const medEnd =
-      Math.PI *
-      ((totalLow + totalMedium) / (totalLow + totalMedium + totalHigh));
+    const medEnd = Math.PI * ((totalLow + totalMedium) / total);
     let cumMed = 0;
     for (let i = 0; i < dataMedium.length - 1; i++) {
       cumMed += dataMedium[i].value;
@@ -185,7 +188,42 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   }
   const dividerLines = computeDividerLines();
 
+  const testing = false;
+
   return html`<div>
+    ${testing &&
+    html` <div>
+      <p style="color:white;text-decoration: underline;">
+        Vertical: ${window.customChartsConfig.vertical}
+      </p>
+      <p style="color:#60E2B7;">
+        LOW:${" "}
+        ${dataLow.map((d) => {
+          console.log("BRAND DISCOVERY - Rendering low disruption channel:", d);
+          return html`${d.label}: ${d.value} |`;
+        })}
+      </p>
+      <p style="color:white;">
+        MEDIUM:${" "}
+        ${dataMedium.map((d) => {
+          console.log(
+            "BRAND DISCOVERY - Rendering medium disruption channel:",
+            d,
+          );
+          return html`${d.label}: ${d.value} |`;
+        })}
+      </p>
+      <p style="color:#B7A6FF;">
+        HIGH:${" "}
+        ${dataHigh.map((d) => {
+          console.log(
+            "BRAND DISCOVERY - Rendering high disruption channel:",
+            d,
+          );
+          return html`${d.label}: ${d.value} |`;
+        })}
+      </p>
+    </div>`}
     ${isMobile
       ? html`<div
           style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-bottom: 16px;"

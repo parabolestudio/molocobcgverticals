@@ -82,8 +82,9 @@
         margin-bottom: 5px;
       }
       .site-container {
-        width: 874px;
+        width: 914px; /*874px;*/
         margin: 0 auto;
+        padding: 0 20px;
         background-color: #fff;
 
         @media (max-width: 768px) {
@@ -93,7 +94,7 @@
     </style>
     <script>
       window.customChartsConfig = {
-        vertical: "FinTech",
+        vertical: "On-Demand",
       };
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -104,18 +105,18 @@
     />
   </head>
   <body>
-    <div class="site-container">
+    <div class="site-container" style="background-color: #12508c">
       <h1>Moloco BCG Verticals</h1>
       <div style="background-color: pink; height: 800px">
         <p>Placeholder</p>
       </div>
-      <div>
+      <!-- <div>
         <h3>Vis Quadrant</h3>
         <div id="vis-quadrant"></div>
-      </div>
+      </div> -->
       <div>
-        <h3>Vis Brand Discovery</h3>
-        <div id="vis-brand-discovery" style="background-color: #12508c"></div>
+        <h3 style="color: white">Vis Brand Discovery</h3>
+        <div id="vis-brand-discovery"></div>
       </div>
       <!-- <div>
         <h3>Vis Service Disruption</h3>
