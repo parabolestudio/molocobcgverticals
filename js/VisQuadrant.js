@@ -580,8 +580,9 @@ export function VisQuadrant({ vertical, isMobile }) {
     </svg>
   `;
 
+  // for mobile, remove width and height attributes to make it responsive
   const mobileChart = html`
-    <svg width="354" height="403" fill="none" viewBox="0 0 354 403">
+    <svg fill="none" viewBox="0 0 354 403">
       <defs>
         <linearGradient
           id="a"
