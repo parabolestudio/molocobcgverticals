@@ -56,11 +56,10 @@ const groupings = {
   ],
 };
 
-// TODO: replace with actual average values
 const averageValues = {
-  "Acquisition strength": 7.25,
-  "Sustained loyalty": 6.75,
-  "Platform engagement depth": 7.5,
+  "Acquisition strength": 7.6,
+  "Sustained loyalty": 6.92,
+  "Platform engagement depth": 6.82,
 };
 
 export function VisCustomerRelationships({ id, variable, data, isMobile }) {

@@ -381,8 +381,12 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
       // Map global t into per-segment progress (0→1 each)
       const lowP = Math.min(t / lowFrac, 1);
-      const medP = lowFrac > 0 ? Math.max(0, Math.min((t - lowFrac) / medFrac, 1)) : 0;
-      const highP = (lowFrac + medFrac) > 0 ? Math.max(0, Math.min((t - lowFrac - medFrac) / highFrac, 1)) : 0;
+      const medP =
+        lowFrac > 0 ? Math.max(0, Math.min((t - lowFrac) / medFrac, 1)) : 0;
+      const highP =
+        lowFrac + medFrac > 0
+          ? Math.max(0, Math.min((t - lowFrac - medFrac) / highFrac, 1))
+          : 0;
 
       setAnimProgress({ low: lowP, medium: medP, high: highP });
 

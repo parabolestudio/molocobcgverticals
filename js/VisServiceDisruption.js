@@ -1,12 +1,11 @@
-import { html, scaleThreshold, scalePoint } from "./lib.js";
+import { html, scaleThreshold, scalePoint, scaleLinear } from "./lib.js";
 import { useInView } from "./useInView.js";
 import { getVariableClass } from "./helpers.js";
 
-// TODO: replace with actual average values
 const averageValues = {
-  Disintermediation: 7,
-  "Data standardization": 6,
-  "Regulatory shield": 4,
+  Disintermediation: 4.7,
+  "Data standardization": 3.5,
+  "Regulatory shield": 5.8,
 };
 
 export function VisServiceDisruption({ variable, data, isMobile }) {
@@ -44,8 +43,8 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     "Very High": "#7659EE",
   };
 
-  const scaleXDesktop = scalePoint()
-    .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  const scaleXDesktop = scaleLinear()
+    .domain([1, 10])
     .range([0, innerWidth - circleDiameter]);
   const scaleXMobile = scalePoint()
     .domain([1, 2, 3, 4, 5])
