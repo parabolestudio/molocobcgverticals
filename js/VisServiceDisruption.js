@@ -33,14 +33,14 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
 
   const disruptionScale = scaleThreshold()
     .domain([2.001, 4.001, 6.001, 8.001, 10.001])
-    .range(["Very Low", "Low", "Moderate", "High", "Very High"]);
+    .range(["VeryLow", "Low", "Moderate", "High", "VeryHigh"]);
 
   const colorMapping = {
-    "Very Low": "#1AA476",
+    VeryLow: "#1AA476",
     Low: "#60E2B7",
     Moderate: "#D9D9D9",
     High: "#B7A6FF",
-    "Very High": "#7659EE",
+    VeryHigh: "#7659EE",
   };
 
   const scaleXDesktop = scaleLinear()
@@ -139,16 +139,41 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
             ? scaleYMobile(i + 1)
             : innerHeight / 2 + circleDiameter / 2 - 8;
 
-          return html`<circle
-            class="circle-${getVariableClass(variable)}-${i + 1} vis-hidden"
-            cx="${cx}"
-            cy="${cy}"
-            r="${circleDiameter / 2}"
-            fill="${color}"
-            stroke="${type === "active" ? "none" : "#00000075"}"
-            stroke-dasharray="${type === "active" ? "none" : "4 2"}"
-            style="transition: opacity 0.3s ease-in-out;"
-          />`;
+          const showGradient =
+            i + 1 === Math.round(data) && data % 2 === 0 && data < 10;
+
+          return html`<g>
+            ${showGradient &&
+            html`<defs>
+              <linearGradient
+                id="gradient-${disruptionScale(data)}-${i + 1}"
+                x1="0"
+                y1="0"
+                x2="100%"
+                y2="0"
+              >
+                <stop
+                  offset="0%"
+                  stop-color="${colorMapping[disruptionScale(data)]}"
+                />
+                <stop
+                  offset="100%"
+                  stop-color="${colorMapping[disruptionScale(data + 2)]}"
+                />
+              </linearGradient>
+            </defs>`}
+            <circle
+              class="circle-${getVariableClass(variable)}-${i + 1} vis-hidden"
+              cx="${cx}"
+              cy="${cy}"
+              r="${circleDiameter / 2}"
+              fill="${showGradient
+                ? `url(#gradient-${disruptionScale(data)}-${i + 1})`
+                : color}"
+              stroke="${type === "active" ? "none" : "#00000075"}"
+              stroke-dasharray="${type === "active" ? "none" : "4 2"}"
+              style="transition: opacity 0.3s ease-in-out;"
+          /></g>`;
         })}
       </g>
     </svg>
