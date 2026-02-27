@@ -121,8 +121,8 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     ref=${containerRef}
     style="${isMobile
       ? avgAbove
-        ? "align-items: flex-end; margin-top: -30px;"
-        : "align-items: flex-start; margin-bottom: -30px;"
+        ? "align-items: flex-end; margin-top: -10px;"
+        : "align-items: flex-start; margin-top: 15px; margin-bottom: -20px;"
       : "align-items: center;"}"
   >
     <span
