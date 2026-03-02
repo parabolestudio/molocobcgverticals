@@ -156,7 +156,7 @@
     line-height: 119.965%; /* 16.795px */
   }
   .ban {
-    color: var(--Black, #04033a);
+    fill: var(--Black, #04033a);
     transition: opacity 0.3s ease-out;
 
     font-family: MuseoModerno;
