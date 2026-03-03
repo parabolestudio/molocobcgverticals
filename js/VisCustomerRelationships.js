@@ -200,7 +200,7 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
                 const cx = bbox.x + bbox.width / 2;
                 const cy = bbox.y + bbox.height;
                 banEl.style.transformOrigin = `${cx}px ${cy}px`;
-                banEl.classList.add("vis-highlight-quadrant");
+                banEl.classList.add("vis-highlight-ban");
               }
             }, 150);
           }, 0);
