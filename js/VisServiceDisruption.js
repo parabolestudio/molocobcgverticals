@@ -72,9 +72,9 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     scaleXMobileLinear(avgAbove ? avgValue : avgValue - 5) + circleDiameter / 2;
   const avgGroupYMobile = avgAbove
     ? 35
-    : scaleYMobileRangeEnd + circleDiameter / 2 - circleDiameter / 2;
+    : scaleYMobileRangeEnd - circleDiameter / 2 - 2;
   const avgLineY2Mobile = avgAbove
-    ? scaleYMobileRangeStart - circleDiameter / 2 - 18
+    ? scaleYMobileRangeStart - circleDiameter / 2
     : innerHeight - avgGroupYMobile - circleDiameter / 2 - 18;
   const avgTextDyMobile = avgAbove ? -10 : avgLineY2Mobile + 8;
 
@@ -133,32 +133,6 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     >
     <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
-        <g
-          class="${`average-elements-${getVariableClass(variable)} vis-hidden`}"
-          transform="translate(${isMobile
-            ? avgXMobile
-            : scaleXDesktop(avgValue) + circleDiameter / 2}, ${isMobile
-            ? avgGroupYMobile
-            : 20})"
-          style="transition: opacity 0.3s ease-in-out;"
-        >
-          <text
-            class="avg-text"
-            dy="${isMobile ? avgTextDyMobile : -10}"
-            text-anchor="middle"
-            dominant-baseline="middle"
-          >
-            avg.
-          </text>
-          <line
-            y1="0"
-            y2="${isMobile
-              ? avgLineY2Mobile
-              : innerHeight / 2 + circleDiameter / 2 - 26}"
-            stroke="var(--Black, #04033A)"
-            stroke-width="0.5"
-          />
-        </g>
         <g>
           ${Array.from({ length: 10 }, (_, i) => {
             const type = i < data ? "active" : "inactive";
@@ -205,11 +179,40 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
                 fill="${showGradient
                   ? `url(#gradient-${disruptionScale(data)}-${i + 1})`
                   : color}"
-                stroke="${type === "active" ? "none" : "#00000075"}"
-                stroke-dasharray="${type === "active" ? "none" : "4 2"}"
-                style="transition: opacity 0.3s ease-in-out;"
+                stroke="${type === "active" ? "none" : "#81819C"}"
+                style="transition: opacity 0.3s ease-in-out; ${type ===
+                "inactive"
+                  ? "stroke-width: 0.5;"
+                  : ""}"
             /></g>`;
           })}
+        </g>
+
+        <g
+          class="${`average-elements-${getVariableClass(variable)} vis-hidden`}"
+          transform="translate(${isMobile
+            ? avgXMobile
+            : scaleXDesktop(avgValue) + circleDiameter / 2}, ${isMobile
+            ? avgGroupYMobile
+            : 0})"
+          style="transition: opacity 0.3s ease-in-out;"
+        >
+          <text
+            class="avg-text"
+            dy="${isMobile ? avgTextDyMobile : innerHeight + 12}"
+            text-anchor="middle"
+            dominant-baseline="middle"
+          >
+            cross-vertical average: ${avgValue}
+          </text>
+          <line
+            y1="0"
+            y2="${isMobile ? avgLineY2Mobile : innerHeight + 2}"
+            class="avg-line"
+            stroke-width="1px"
+            stroke="#9494aa"
+            stroke-dasharray="3 3"
+          />
         </g>
       </g>
     </svg>

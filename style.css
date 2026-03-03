@@ -46,7 +46,7 @@
     font-family: MuseoModerno;
     font-size: 96px;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 119.965%; /* 115.167px */
     margin: 0;
   }
@@ -68,7 +68,7 @@
       font-family: Montserrat;
       font-size: 14px;
       font-style: normal;
-      font-weight: 400;
+      font-weight: 500;
       line-height: 119.965%; /* 16.795px */
     }
     .annotation-value {
@@ -97,7 +97,7 @@
     font-family: MuseoModerno;
     font-size: 96px;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 119.965%; /* 115.167px */
     transition: opacity 0.3s ease-in-out;
 
@@ -116,19 +116,22 @@
   }
 
   .avg-text {
-    color: var(--Black, #04033a);
+    color: #9494aa;
     text-align: center;
 
     font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 119.965%; /* 16.795px */
     opacity: 0.5;
 
     @media (max-width: 768px) {
       font-size: 12px;
     }
+  }
+  .avg-line {
+    mix-blend-mode: multiply;
   }
 }
 
@@ -162,7 +165,7 @@
     font-family: MuseoModerno;
     font-size: 96px;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 119.965%; /* 115.167px */
     transition: opacity 0.3s ease-in-out;
 
