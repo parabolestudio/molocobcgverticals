@@ -198,11 +198,11 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
               if (banEl) {
                 const bbox = banEl.getBBox();
                 const cx = bbox.x + bbox.width / 2;
-                const cy = bbox.y + bbox.height / 2;
+                const cy = bbox.y + bbox.height;
                 banEl.style.transformOrigin = `${cx}px ${cy}px`;
                 banEl.classList.add("vis-highlight-quadrant");
               }
-            }, 300);
+            }, 150);
           }, 0);
         }
       };
@@ -303,6 +303,7 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
             x2="${averageElement.lineEnd.x}"
             y2="${averageElement.lineEnd.y}"
             stroke="#04033A"
+            fill="#04033A"
             stroke-opacity="0.4"
             stroke-width="1.5"
             transform="${`translate(${innerWidth / 2}, ${innerHeight}) rotate(-90)`}"
@@ -319,7 +320,7 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
               transform-origin="${averageElement.lineEnd.x +
               10} ${averageElement.lineEnd.y + 2}"
             >
-              avg
+              avg.
             </text>
           </g>
         </g>
