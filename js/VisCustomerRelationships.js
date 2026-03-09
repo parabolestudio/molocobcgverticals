@@ -280,7 +280,7 @@ export function VisCustomerRelationships({ id, variable, data, isMobile }) {
             text-anchor="middle"
             class="ban vis-hidden"
           >
-            ${data}
+            ${data ? Number(data).toFixed(1) : ""}
           </text>
         </g>
         <g class="arcs">
