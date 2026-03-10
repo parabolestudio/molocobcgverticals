@@ -200,3 +200,24 @@
     line-height: 119.965%; /* 16.795px */
   }
 }
+
+.number-bars-container {
+  display: flex;
+  justify-content: flex-start;
+
+  .number {
+    color: #1aa476;
+    flex-shrink: 0;
+
+    /* Big numbers */
+    font-family: MuseoModerno;
+    font-size: 96px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 119.965%; /* 115.167px */
+  }
+
+  svg {
+    overflow: visible;
+  }
+}

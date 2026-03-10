@@ -6,6 +6,7 @@ import { VisQuadrant } from "./js/VisQuadrant.js";
 import { VisBrandDiscovery } from "./js/VisBrandDiscovery.js";
 import { VisServiceDisruption } from "./js/VisServiceDisruption.js";
 import { VisCustomerRelationships } from "./js/VisCustomerRelationships.js";
+import { VisNumberBars } from "./js/VisNumberBars.js";
 
 // detect vertical from global config (embed code in head)
 customChartsConfig = window.customChartsConfig || {};
@@ -135,4 +136,33 @@ if (!vertical) {
       });
     }
   });
+
+  // NUMBER BARS ("The Learning Window")
+
+  if (vertical === "Retail & Ecommerce") {
+    renderVis({
+      id: "vis-number-bars-learning-window-1",
+      component: VisNumberBars,
+      vertical,
+      data: 86,
+      average: null,
+      isMobile: mobile,
+    });
+    renderVis({
+      id: "vis-number-bars-learning-window-2",
+      component: VisNumberBars,
+      vertical,
+      data: 36,
+      average: null,
+      isMobile: mobile,
+    });
+    renderVis({
+      id: "vis-number-bars-learning-window-3",
+      component: VisNumberBars,
+      vertical,
+      data: 5,
+      average: null,
+      isMobile: mobile,
+    });
+  }
 }
