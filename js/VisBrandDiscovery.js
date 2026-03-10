@@ -376,6 +376,12 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
     const tick = (now) => {
       const raw = Math.min((now - startTime) / totalDuration, 1);
+
+      if (raw >= 1) {
+        setAnimProgress({ low: 1, medium: 1, high: 1 });
+        return;
+      }
+
       // gentle ease-out so it doesn't stop abruptly
       const t = 1 - Math.pow(1 - raw, 2);
 
@@ -390,9 +396,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
 
       setAnimProgress({ low: lowP, medium: medP, high: highP });
 
-      if (raw < 1) {
-        requestAnimationFrame(tick);
-      }
+      requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   };

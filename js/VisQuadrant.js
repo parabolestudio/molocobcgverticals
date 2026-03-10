@@ -1260,9 +1260,6 @@ export function VisQuadrant({ vertical, isMobile }) {
       const lightBlueStop = document.querySelector(
         ".gradient-stop-lightblue" + suffix,
       );
-      console.log("maskStop", maskStop);
-      console.log("blueStop", blueStop);
-      console.log("lightBlueStop", lightBlueStop);
       if (!maskStop || !blueStop) return;
 
       const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -1328,11 +1325,6 @@ export function VisQuadrant({ vertical, isMobile }) {
     // all quadrant paths except the one that matches the vertical should be set to opacity 0.2, and the matching one should be set to 0.6
     const quadrants = document.querySelectorAll(".quadrant-highlight");
     quadrants.forEach((quadrant) => {
-      console.log(
-        "quadrant",
-        quadrant,
-        "quadrant-highlight-" + quadrantLocation,
-      );
       if (
         quadrant.classList.contains("quadrant-highlight-" + quadrantLocation)
       ) {
