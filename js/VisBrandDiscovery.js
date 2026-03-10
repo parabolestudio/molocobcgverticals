@@ -205,6 +205,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
         annotations.push({
           ...d,
           midAngle: (startA + endA) / 2,
+          customAngle: startA + (endA - startA) * 0.75,
           color: colorMap[d.type],
         });
       }
@@ -287,6 +288,14 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
         ann.label === "Paid Search"
       ) {
         annOffset = 85; // increase offset for Paid Search label on mobile FinTech to avoid overlap with Organic SEO label
+      }
+
+      if (
+        !isMobile &&
+        vertical === "On-Demand" &&
+        ann.label === "Organic Direct"
+      ) {
+        ann.midAngle = ann.customAngle; // adjust midAngle for Organic Direct in desktop On-Demand to move annotation inside page
       }
 
       if (isMobile) {
