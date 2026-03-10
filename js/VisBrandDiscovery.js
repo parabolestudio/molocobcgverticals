@@ -405,6 +405,21 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     onVisible: () => onVisible(),
   });
 
+  const textLow = {
+    FinTech:
+      " of traffic is organic direct, suggesting strong brand equity provides meaningful insulation.",
+    "On-Demand":
+      "of traffic is organic direct, which does suggest strong brand association, but is still below the cross-industry average of 51%",
+    "Retail & Ecommerce": "",
+  };
+  const textHigh = {
+    FinTech:
+      "of FinTech traffic comes from channels facing high disruption, with organic SEO, the foundation of most digital marketing strategies, particularly exposed.",
+    "On-Demand":
+      "of On-Demand traffic comes from channels facing high disruption. Display is at 20%, whose effectiveness is closely tied to browsing behavior.",
+    "Retail & Ecommerce": "",
+  };
+
   return html`<div class="brand-discovery-container" ref=${containerRef}>
     ${testing &&
     html` <div>
@@ -438,8 +453,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             ${(totalLow * 100).toFixed(0)}%
           </p>
           <p class="ban-label" style="max-width: 220px;">
-            of traffic is organic direct, suggesting strong brand equity
-            provides meaningful insulation.
+            ${textLow[vertical]}
           </p>
         </div>`
       : null}
@@ -549,19 +563,14 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
               ${(totalLow * 100).toFixed(0)}%
             </p>
             <p class="ban-label" style="max-width: 220px;">
-              of traffic is organic direct, suggesting strong brand equity
-              provides meaningful insulation.
+              ${textLow[vertical]}
             </p>
           </div>
           <div>
             <p class="ban" style="color: #B7A6FF">
               ${(totalHigh * 100).toFixed(0)}%
             </p>
-            <p class="ban-label">
-              of FinTech traffic comes from channels facing high disruption,
-              with organic SEO, the foundation of most digital marketing
-              strategies, particularly exposed.
-            </p>
+            <p class="ban-label">${textHigh[vertical]}</p>
           </div>
         </div>`
       : null}
@@ -573,9 +582,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             ${(totalHigh * 100).toFixed(0)}%
           </p>
           <p class="ban-label" style="max-width: 220px;">
-            of FinTech traffic comes from channels facing high disruption, with
-            organic SEO, the foundation of most digital marketing strategies,
-            particularly exposed.
+            ${textHigh[vertical]}
           </p>
         </div>`
       : null}
