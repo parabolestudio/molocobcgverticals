@@ -90,14 +90,14 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
       setTimeout(
         () => {
           const selector = `.circle-${getVariableClass(variable)}-${i + 1}`;
-          const element = document.querySelector(selector);
-          if (element) {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach((element) => {
             const bbox = element.getBBox();
             const cx = bbox.x + bbox.width / 2;
             const cy = bbox.y + bbox.height / 2;
             element.style.transformOrigin = `${cx}px ${cy}px`;
             element.classList.add("vis-highlight-circles");
-          }
+          });
         },
         300 + i * 80,
       );
@@ -129,17 +129,62 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
       class="service-disruption-number service-disruption-number-${getVariableClass(
         variable,
       )} vis-hidden"
+      style="color: ${variable === "Overall score vis"
+        ? colorMapping[disruptionScale(data)]
+        : "#04033a"};"
       >${data}</span
     >
     <svg width="${width}" height="${height}">
       <g transform="translate(${margin.left}, ${margin.top})">
         <g>
           ${Array.from({ length: 10 }, (_, i) => {
-            const type = i < data ? "active" : "inactive";
-            const color =
-              type === "active"
-                ? colorMapping[disruptionScale(data)]
-                : "transparent";
+            let type = "inactive";
+            let showGradient = false;
+            let gradientId = "";
+            let stopColor1 = null;
+            let stopColor2 = null;
+            let color = null;
+            let showPartially = false;
+            let partialClipId = null;
+            let partialColor = null;
+            if (variable !== "Overall score vis") {
+              type = i < data ? "active" : "inactive";
+              if (type === "active") {
+                color = colorMapping[disruptionScale(data)];
+              } else {
+                color = "transparent";
+              }
+              showGradient =
+                i + 1 === Math.round(data) && data % 2 === 0 && data < 10;
+              gradientId = `gradient-${disruptionScale(data)}-${i + 1}`;
+              stopColor1 = colorMapping[disruptionScale(i + 1)];
+              stopColor2 = colorMapping[disruptionScale(i + 1 + 2)];
+            } else {
+              type = i + 1 <= data ? "active" : "inactive";
+              if (type === "active") {
+                color = colorMapping[disruptionScale(data + 1)];
+              } else {
+                color = "transparent";
+              }
+              if (i + 1 === 7) {
+                color = "#876AFF";
+              }
+              showGradient = i + 1 > 4 && (i - 1) % 2 === 0 && i + 1 < 10;
+              gradientId = `gradient-${disruptionScale(i + 4)}-${i + 4}`;
+              stopColor1 = colorMapping[disruptionScale(i + 2)];
+              stopColor2 = colorMapping[disruptionScale(i + 4 + 1)];
+              if (i + 1 === 8) {
+                showPartially = 1 - (8 - data);
+                partialClipId = `clip-partial-${getVariableClass(variable)}-${i + 1}`;
+                partialColor =
+                  variable === "Overall score vis"
+                    ? colorMapping[disruptionScale(i + 2)]
+                    : "transparent";
+                color = "transparent";
+                showGradient = false;
+              }
+            }
+
             const cx = isMobile
               ? scaleXMobile(i + 1 <= 5 ? i + 1 : i + 1 - 5) +
                 circleDiameter / 2
@@ -148,47 +193,61 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
               ? scaleYMobile(i + 1)
               : innerHeight / 2 + circleDiameter / 2 - 8;
 
-            const showGradient =
-              i + 1 === Math.round(data) && data % 2 === 0 && data < 10;
-
             return html`<g>
               ${showGradient &&
               html`<defs>
                 <linearGradient
-                  id="gradient-${disruptionScale(data)}-${i + 1}"
+                  id="${gradientId}"
                   x1="0"
                   y1="0"
                   x2="100%"
                   y2="0"
                 >
-                  <stop
-                    offset="0%"
-                    stop-color="${colorMapping[disruptionScale(data)]}"
-                  />
-                  <stop
-                    offset="100%"
-                    stop-color="${colorMapping[disruptionScale(data + 2)]}"
-                  />
+                  <stop offset="0%" stop-color="${stopColor1}" />
+                  <stop offset="100%" stop-color="${stopColor2}" />
                 </linearGradient>
+              </defs>`}
+              ${showPartially &&
+              html`<defs>
+                <clipPath id="${partialClipId}">
+                  <rect
+                    x="${cx - circleDiameter / 2}"
+                    y="${cy - circleDiameter / 2}"
+                    width="${showPartially * circleDiameter}"
+                    height="${circleDiameter}"
+                  />
+                </clipPath>
               </defs>`}
               <circle
                 class="circle-${getVariableClass(variable)}-${i + 1} vis-hidden"
                 cx="${cx}"
                 cy="${cy}"
                 r="${circleDiameter / 2}"
-                fill="${showGradient
-                  ? `url(#gradient-${disruptionScale(data)}-${i + 1})`
-                  : color}"
+                fill="${showGradient ? `url(#${gradientId})` : color}"
                 stroke="${type === "active" ? "none" : "#81819C"}"
                 style="transition: opacity 0.3s ease-in-out; ${type ===
                 "inactive"
                   ? "stroke-width: 0.5;"
                   : ""}"
-            /></g>`;
+              />
+              ${showPartially &&
+              html`<circle
+                cx="${cx}"
+                cy="${cy}"
+                r="${circleDiameter / 2}"
+                fill="${partialColor}"
+                clip-path="url(#${partialClipId})"
+                style="transition: opacity 0.3s ease-in-out;"
+                stroke-width="1"
+                stroke="${partialColor}"
+                class="circle-${getVariableClass(variable)}-${i + 1} vis-hidden"
+              />`}
+            </g>`;
           })}
         </g>
 
-        <g
+        ${variable !== "Overall score vis" &&
+        html`<g
           class="${`average-elements-${getVariableClass(variable)} vis-hidden`}"
           transform="translate(${isMobile
             ? avgXMobile
@@ -213,7 +272,46 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
             stroke="#9494aa"
             stroke-dasharray="3 3"
           />
-        </g>
+        </g>`}
+        ${variable === "Overall score vis" &&
+        html`<g
+          class="${`average-elements-${getVariableClass(variable)} vis-hidden`}"
+          style="transition: opacity 0.3s ease-in-out;"
+        >
+          <text
+            text-anchor="middle"
+            dominant-baseline="middle"
+            fill="#fff"
+            font-size="14"
+            font-family="Montserrat, sans-serif"
+            style="font-weight: 500;"
+            transform="${isMobile
+              ? `translate(${
+                  (innerWidth - scaleXMobile(2)) / 2 + scaleXMobile(2)
+                }, ${innerHeight - 20})`
+              : `translate(${
+                  (innerWidth - scaleXDesktop(7)) / 2 + scaleXDesktop(7)
+                }, -2)`}"
+          >
+            High Disruption
+          </text>
+          <path
+            d="${isMobile
+              ? `M ${scaleXMobile(2) - 3},${scaleYMobile(6)} 
+                L ${scaleXMobile(2) - 3},${innerHeight - 35} 
+                L ${innerWidth + 5},${innerHeight - 35}
+                L ${innerWidth + 5},${scaleYMobile(6)}`
+              : `M ${scaleXDesktop(7)},${25} 
+                L ${scaleXDesktop(7)},${10} 
+                L ${innerWidth},${10}
+                L ${innerWidth},${25}`}"
+            fill="none"
+            stroke-width="1px"
+            stroke="#fff"
+            stroke-opacity="0.5"
+            stroke-dasharray="5 5"
+          />
+        </g>`}
       </g>
     </svg>
   </div>`;
