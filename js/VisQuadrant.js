@@ -1179,7 +1179,7 @@ export function VisQuadrant({ vertical, isMobile }) {
     </svg>
   `;
 
-  const appearanceOrder = [
+  const appearanceOrderSecured = [
     { class: "Dating", type: "vertical" },
     { class: "Gaming", type: "vertical" },
     { class: "Gen-AI", type: "vertical" },
@@ -1198,25 +1198,52 @@ export function VisQuadrant({ vertical, isMobile }) {
     { class: "On-Demand-Services", type: "vertical" },
     { class: "FinTech", type: "vertical" },
   ];
+  const appearanceOrderBreached = [
+    { class: "Productivity", type: "vertical" },
+    { class: "FinTech", type: "vertical" },
+    { class: "Financial-Services", type: "vertical" },
+    { class: "Media-Streaming", type: "vertical" },
+    { class: "Social", type: "vertical" },
+    { class: "On-Demand-Services", type: "vertical" },
+    { class: "Auto-OEMs", type: "vertical" },
+    { class: "Dating", type: "vertical" },
+    { class: "Gaming", type: "vertical" },
+    { class: "Gen-AI", type: "vertical" },
+    { class: "Casino-Sportsbetting", type: "vertical" },
+    { class: "Auto-Marketplaces", type: "vertical" },
+    { class: "Travel", type: "vertical" },
+    { class: "News", type: "vertical" },
+    { class: "Health-Fitness", type: "vertical" },
+    { class: "Education", type: "vertical" },
+    { class: "Retail-Ecommerce", type: "vertical" },
+  ];
 
-  const verticalMapping = {
-    "Retail & Ecommerce": "Retail-Ecommerce",
-    FinTech: "FinTech",
-    "On-Demand": "On-Demand-Services",
+  const verticalConfig = {
+    "Retail & Ecommerce": {
+      key: "Retail-Ecommerce",
+      quadrant: "bottom-left",
+      appearanceOrder: appearanceOrderBreached,
+    },
+    FinTech: {
+      key: "FinTech",
+      quadrant: "top-right",
+      appearanceOrder: appearanceOrderSecured,
+    },
+    "On-Demand": {
+      key: "On-Demand-Services",
+      quadrant: "top-right",
+      appearanceOrder: appearanceOrderSecured,
+    },
   };
-  const quadrantMapping = {
-    FinTech: "top-right",
-    "On-Demand": "top-right",
-    "Retail & Ecommerce": "bottom-left",
-  };
-  const quadrantLocation = quadrantMapping[vertical] || "top-right";
+  const config = verticalConfig[vertical] || verticalConfig["FinTech"];
+  const { quadrant: quadrantLocation, appearanceOrder, key } = config;
 
   // sort appearanceOrder based on verticalMapping, so that the vertical that matches the vertical variable is last in the order
   appearanceOrder.sort((a, b) => {
-    if (a.type === "vertical" && a.class === verticalMapping[vertical]) {
+    if (a.type === "vertical" && a.class === key) {
       return 1;
     }
-    if (b.type === "vertical" && b.class === verticalMapping[vertical]) {
+    if (b.type === "vertical" && b.class === key) {
       return -1;
     }
     return 0;
@@ -1266,8 +1293,7 @@ export function VisQuadrant({ vertical, isMobile }) {
     appearanceOrder.forEach((el, index) => {
       setTimeout(
         () => {
-          const isActiveVertical =
-            el.type === "vertical" && el.class === verticalMapping[vertical];
+          const isActiveVertical = el.type === "vertical" && el.class === key;
           const typeExtended = isActiveVertical ? "vertical.active" : el.type;
           const selector = typeExtended
             ? `.${typeExtended}.${el.class}`
