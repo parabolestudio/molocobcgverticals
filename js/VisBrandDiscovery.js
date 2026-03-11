@@ -88,7 +88,11 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
   const widthLeft = isMobile ? 365 : 492;
   const heightSemicircle = isMobile ? 213 : 288;
   const heightAnnotationsTop = isMobile ? 100 : 63;
-  const widthAnnotationsRight = isMobile ? 120 : 207;
+  const widthAnnotationsRight = isMobile
+    ? vertical === "On-Demand"
+      ? 50
+      : 120
+    : 207;
   const widthCurve = isMobile ? 65 : 86;
   const svgWidth = widthLeft + widthCurve + widthAnnotationsRight;
   const svgHeight = heightSemicircle + heightAnnotationsTop;

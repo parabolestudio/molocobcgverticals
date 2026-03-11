@@ -49,7 +49,6 @@ if (!vertical) {
     if (filteredData.length > 0) {
       const verticalData = filteredData[0];
 
-      console.log("Service disruption data for", vertical, verticalData);
       if (vertical === "FinTech" || vertical === "On-Demand") {
         // render each variable's vis
         renderVis({
