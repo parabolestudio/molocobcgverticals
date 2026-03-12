@@ -15,7 +15,6 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
       const entry = entries[0];
       if (entry) {
         const w = Math.floor(entry.contentRect.width);
-        console.log("NUMBER BARS - Container width:", w);
         setWidth(w);
       }
     });
