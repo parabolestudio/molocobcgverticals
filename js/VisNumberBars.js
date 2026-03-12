@@ -1,10 +1,11 @@
 import { html, useState, useEffect, useRef, scaleLinear } from "./lib.js";
+import { useInView } from "./useInView.js";
 
 export function VisNumberBars({ id, variable, data, average, isMobile }) {
   if (!data) return html`<div>Loading data...</div>`;
-  console.log("NUMBER BARS - Loaded data:", variable, data, average, isMobile);
 
   const [width, setWidth] = useState(0);
+  const [isInView, setIsInView] = useState(false);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -22,8 +23,6 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
     return () => observer.disconnect();
   }, []);
 
-  console.log("NUMBER BARS - Current width:", width);
-
   const height = 80;
   const heightBar = 50;
   const margin = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -32,11 +31,25 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
 
   const scaleX = scaleLinear().domain([0, 100]).range([0, innerWidth]);
 
+  useEffect(() => {
+    if (!isInView || width <= 0) return;
+    const bar = containerRef.current?.querySelector("rect");
+    if (bar) {
+      bar.style.transition = "width 1s ease-in-out";
+      bar.style.width = `${scaleX(data)}px`;
+    }
+  }, [isInView, width]);
+
+  const containerRefInView = useInView({
+    onVisible: () => setIsInView(true),
+  });
+
   return html`<div
     class="number-bars-container"
     style="${isMobile
       ? "flex-direction: column-reverse; gap: 10px;"
       : "gap: 30px;"}"
+    ref=${containerRefInView}
   >
     <span
       class="number number-bars-${data}"
@@ -58,9 +71,9 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
           <rect
             x="0"
             y="${innerHeight - heightBar}"
-            width="${scaleX(data)}"
             height="${heightBar}"
             fill="url(#gradient)"
+            style="width: 0;"
           />
         </g>
         <defs>
