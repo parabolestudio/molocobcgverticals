@@ -17,7 +17,13 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
     return html`<span>${data}</span>`;
   }
   if (variable === "Disruption value") {
-    return html`<span>${data} disruption</span>`;
+    console.log("SERVICE DISRUPTION - Rendering disruption value:", data);
+    let disruptionText = data;
+    disruptionText = disruptionText
+      .replace("Very Low", "Very low")
+      .replace("Very High", "Very high");
+
+    return html`<span>${disruptionText} disruption</span>`;
   }
 
   const circleDiameter = isMobile ? 35 : 40;
