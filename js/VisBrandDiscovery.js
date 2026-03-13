@@ -432,7 +432,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     FinTech:
       "of FinTech traffic comes from channels facing high disruption, with organic SEO, the foundation of most digital marketing strategies, particularly exposed.",
     "On-Demand":
-      "of On-Demand traffic comes from channels facing high disruption. Display is at 20%, whose effectiveness is closely tied to browsing behavior.",
+      "of On-Demand traffic comes from channels facing high disruption. Organic SEO (17%) and Paid Search (11%) effectiveness are both closely tied to browsing behavior.",
     "Retail & Ecommerce": "",
   };
 
