@@ -49,6 +49,9 @@
 }
 
 #vis-quadrant {
+  svg {
+    margin: 0 auto;
+  }
   .verticals .vertical {
     transition: opacity 0.3s ease-in-out;
   }
