@@ -295,9 +295,12 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
       }
 
       if (
-        !isMobile &&
-        vertical === "On-Demand" &&
-        ann.label === "Organic Direct"
+        (!isMobile &&
+          vertical === "On-Demand" &&
+          ann.label === "Organic Direct") ||
+        (!isMobile &&
+          vertical === "Retail & Ecommerce" &&
+          ann.label === "Organic Direct")
       ) {
         ann.midAngle = ann.customAngle; // adjust midAngle for Organic Direct in desktop On-Demand to move annotation inside page
       }
