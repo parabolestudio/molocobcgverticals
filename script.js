@@ -145,7 +145,7 @@ if (!vertical) {
       component: VisNumberBars,
       vertical,
       data: 86,
-      average: null,
+      average: 76,
       isMobile: mobile,
     });
     renderVis({
@@ -153,7 +153,7 @@ if (!vertical) {
       component: VisNumberBars,
       vertical,
       data: 36,
-      average: null,
+      average: 67,
       isMobile: mobile,
     });
     renderVis({
@@ -161,7 +161,7 @@ if (!vertical) {
       component: VisNumberBars,
       vertical,
       data: 5,
-      average: null,
+      average: 25,
       isMobile: mobile,
     });
   }

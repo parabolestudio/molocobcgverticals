@@ -1,7 +1,7 @@
 import { html, useState, useEffect, useRef, scaleLinear } from "./lib.js";
 import { useInView } from "./useInView.js";
 
-export function VisNumberBars({ id, variable, data, average, isMobile }) {
+export function VisNumberBars({ id, data, average, isMobile }) {
   if (!data) return html`<div>Loading data...</div>`;
 
   const [width, setWidth] = useState(0);
@@ -37,11 +37,21 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
       bar.style.transition = "width 1s ease-in-out";
       bar.style.width = `${scaleX(data)}px`;
     }
+
+    setTimeout(() => {
+      const averageGroup =
+        containerRef.current?.querySelector(".average-group");
+      if (averageGroup) {
+        averageGroup.classList.remove("vis-hidden");
+      }
+    }, 1000);
   }, [isInView, width]);
 
   const containerRefInView = useInView({
     onVisible: () => setIsInView(true),
   });
+
+  const avgLeft = average !== null && average > 50 && isMobile;
 
   return html`<div
     class="number-bars-container"
@@ -74,6 +84,45 @@ export function VisNumberBars({ id, variable, data, average, isMobile }) {
             fill="url(#gradient)"
             style="width: 0;"
           />
+
+          ${average !== null &&
+          html`<g
+            class="average-group vis-hidden"
+            style="transition: opacity 0.5s ease-in-out; "
+          >
+            <text
+              x="${avgLeft ? scaleX(average) - 5 : scaleX(average) + 5}"
+              y="${15}"
+              text-anchor="${avgLeft ? "end" : "start"}"
+              fill="#9494AA"
+              font-size="14"
+              font-family="Montserrat, sans-serif"
+              font-weight="500"
+            >
+              all industries:${" "}
+              <tspan fill="#04033A" font-weight="700">${average}%</tspan>
+            </text>
+            ${average > data &&
+            html`
+              <rect
+                x="${scaleX(data)}"
+                y="${innerHeight - heightBar}"
+                height="${heightBar}"
+                width="${scaleX(average) - scaleX(data)}"
+                fill="#DBDBDB"
+              />
+            `}
+            <line
+              x1="${scaleX(average)}"
+              y1="${0}"
+              x2="${scaleX(average)}"
+              y2="${innerHeight}"
+              stroke="#9494AA"
+              stroke-width="1"
+              stroke-dasharray="3 3"
+              style="mix-blend-mode: multiply;"
+            />
+          </g>`}
         </g>
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="142%" y2="0%">
