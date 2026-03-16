@@ -425,7 +425,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     FinTech:
       " of traffic is organic direct, suggesting strong brand equity provides meaningful insulation.",
     "On-Demand":
-      "of traffic is organic direct, which does suggest strong brand association, but is still below the cross-industry average of 51%",
+      "of On-Demand traffic comes from AI-resilient channels, below the cross-industry average of 55% - making it one of the more exposed verticals.",
     "Retail & Ecommerce": "",
   };
   const textHigh = {
