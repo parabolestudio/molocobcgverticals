@@ -581,7 +581,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             <p
               class="ban-label"
               style="max-width: ${vertical === "On-Demand"
-                ? "230px"
+                ? "260px"
                 : "220px"};"
             >
               ${textLow[vertical]}
