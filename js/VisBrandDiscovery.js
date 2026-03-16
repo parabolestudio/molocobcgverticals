@@ -425,7 +425,7 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
     FinTech:
       " of traffic is organic direct, suggesting strong brand equity provides meaningful insulation.",
     "On-Demand":
-      "of On-Demand traffic comes from AI-resilient channels, below the cross-industry average of 55% - making it one of the more exposed verticals.",
+      "of traffic comes from AI-resilient channels, which is below the cross-industry average of 55%. On-Demand is one of the more exposed industries.",
     "Retail & Ecommerce": "",
   };
   const textHigh = {
@@ -578,7 +578,12 @@ export function VisBrandDiscovery({ vertical, isMobile }) {
             <p class="ban" style="color: #60E2B7">
               ${(totalLow * 100).toFixed(0)}%
             </p>
-            <p class="ban-label" style="max-width: 220px;">
+            <p
+              class="ban-label"
+              style="max-width: ${vertical === "On-Demand"
+                ? "230px"
+                : "220px"};"
+            >
               ${textLow[vertical]}
             </p>
           </div>
