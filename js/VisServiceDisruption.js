@@ -299,7 +299,7 @@ export function VisServiceDisruption({ variable, data, isMobile }) {
                   (innerWidth - scaleXDesktop(7)) / 2 + scaleXDesktop(7)
                 }, -2)`}"
           >
-            High Disruption
+            High disruption
           </text>
           <path
             d="${isMobile
