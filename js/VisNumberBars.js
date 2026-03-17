@@ -32,18 +32,36 @@ export function VisNumberBars({ id, data, average, isMobile }) {
 
   useEffect(() => {
     if (!isInView || width <= 0) return;
-    const bar = containerRef.current?.querySelector("rect");
+    const bar = containerRef.current?.querySelector(
+      `.number-bars-svg-container-${id} .bar-rect-1`,
+    );
     if (bar) {
       bar.style.transition = "width 1s ease-in-out";
       bar.style.width = `${scaleX(data)}px`;
     }
 
     setTimeout(() => {
-      const averageGroup =
-        containerRef.current?.querySelector(".average-group");
-      if (averageGroup) {
-        averageGroup.classList.remove("vis-hidden");
+      const bar2 = containerRef.current?.querySelector(
+        `.number-bars-svg-container-${id} .bar-rect-2`,
+      );
+      if (bar2) {
+        bar2.style.transition = "width 1s ease-in-out";
+        bar2.style.width = `${scaleX(average) - scaleX(data)}px`;
       }
+      setTimeout(() => {
+        const averageGroupText = containerRef.current?.querySelector(
+          `.number-bars-svg-container-${id} .average-group text`,
+        );
+        if (averageGroupText) {
+          averageGroupText.classList.remove("vis-hidden");
+        }
+        const averageGroupLine = containerRef.current?.querySelector(
+          `.number-bars-svg-container-${id} .average-group line`,
+        );
+        if (averageGroupLine) {
+          averageGroupLine.classList.remove("vis-hidden");
+        }
+      }, 1000);
     }, 1000);
   }, [isInView, width]);
 
@@ -83,13 +101,11 @@ export function VisNumberBars({ id, data, average, isMobile }) {
             height="${heightBar}"
             fill="url(#gradient)"
             style="width: 0;"
+            class="bar-rect-1"
           />
 
           ${average !== null &&
-          html`<g
-            class="average-group vis-hidden"
-            style="transition: opacity 0.5s ease-in-out; "
-          >
+          html`<g class="average-group ">
             <text
               x="${avgLeft ? scaleX(average) - 5 : scaleX(average) + 5}"
               y="${15}"
@@ -98,20 +114,20 @@ export function VisNumberBars({ id, data, average, isMobile }) {
               font-size="14"
               font-family="Montserrat, sans-serif"
               font-weight="500"
+              class="vis-hidden"
+              style="transition: opacity 0.5s ease-in-out; "
             >
               all industries:${" "}
               <tspan fill="#04033A" font-weight="700">${average}%</tspan>
             </text>
-            ${average > data &&
-            html`
-              <rect
-                x="${scaleX(data)}"
-                y="${innerHeight - heightBar}"
-                height="${heightBar}"
-                width="${scaleX(average) - scaleX(data)}"
-                fill="#DBDBDB"
-              />
-            `}
+            <rect
+              x="${scaleX(data)}"
+              y="${innerHeight - heightBar}"
+              height="${heightBar}"
+              style="width: 0;"
+              fill="#DBDBDB"
+              class="bar-rect-2"
+            />
             <line
               x1="${scaleX(average)}"
               y1="${0}"
@@ -121,6 +137,8 @@ export function VisNumberBars({ id, data, average, isMobile }) {
               stroke-width="1"
               stroke-dasharray="3 3"
               style="mix-blend-mode: multiply;"
+              class="vis-hidden"
+              style="transition: opacity 0.5s ease-in-out; "
             />
           </g>`}
         </g>
